@@ -13,6 +13,8 @@
     <string name="ac_sing_up">Регистрация</string>
     <string name="ac_sing_in">Вход</string>
     <string name="ac_sing_out">Выход</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
 
 
 </resources>
