@@ -7,10 +7,16 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.serglife.bulletinboard.databinding.ActivityMainBinding
+import com.serglife.bulletinboard.ui.dialog.DialogConst.SING_UP_STATE
+import com.serglife.bulletinboard.ui.dialog.DialogHelper
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var binding: ActivityMainBinding
+    private val dialogHelper = DialogHelper(this)
+    val mAuth = FirebaseAuth.getInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(ActivityMainBinding.inflate(layoutInflater).also { binding = it }.root)
@@ -49,10 +55,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 Toast.makeText(this,"Press in id_appliances", Toast.LENGTH_LONG).show()
             }
             R.id.id_sing_up -> {
-                Toast.makeText(this,"Press in id_sing_up", Toast.LENGTH_LONG).show()
+                dialogHelper.createDialog(SING_UP_STATE)
             }
             R.id.id_sing_in -> {
-                Toast.makeText(this,"Press in id_sing_in", Toast.LENGTH_LONG).show()
+                dialogHelper.createDialog(SING_UP_STATE)
             }
             R.id.id_sing_out -> {
                 Toast.makeText(this,"Press in id_sing_out", Toast.LENGTH_LONG).show()

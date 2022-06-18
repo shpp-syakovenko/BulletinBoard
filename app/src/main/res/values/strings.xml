@@ -8,7 +8,6 @@
     <string name="ad_pc">Компьютеры</string>
     <string name="ad_smartphone">Смартфоны</string>
     <string name="ad_appliances">Бытовая техника</string>
-
     <string name="ad_cat_2">Аккаунт</string>
     <string name="ac_sing_up">Регистрация</string>
     <string name="ac_sing_in">Вход</string>
@@ -17,6 +16,16 @@
     <string name="close">Close</string>
     <string name="avatar">Avatar</string>
     <string name="header_email">serglife777@gmail.com</string>
+
+    <!-- Sing dialog -->
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="sing_up_action">Зарегистрироватся</string>
+    <string name="sing_in_action">Войти</string>
+    <string name="forget_password">Забыли пароль?</string>
+    <string name="sing_up_error">Зарегестрироваться не удалось</string>
+    <string name="send_verification_error">Не удалось отправить email для подствержения.</string>
+    <string name="send_verification_done">На вашу почту была отправленна ссылка для подвержения аккаунта.</string>
 
 
 </resources>
