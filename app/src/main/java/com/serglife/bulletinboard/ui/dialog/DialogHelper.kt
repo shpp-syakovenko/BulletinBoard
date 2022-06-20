@@ -13,6 +13,8 @@ class DialogHelper(private val act: MainActivity) {
     fun createDialog(index: Int) {
         val builder = AlertDialog.Builder(act)
         val rootDialogElement = SingDialogBinding.inflate(act.layoutInflater)
+        builder.setView(rootDialogElement.root)
+
         if (index == DialogConst.SING_UP_STATE) {
             rootDialogElement.tvSingTitle.text = act.resources.getString(R.string.ac_sing_up)
             rootDialogElement.btSingUpin.text = act.resources.getString(R.string.sing_up_action)
@@ -22,18 +24,24 @@ class DialogHelper(private val act: MainActivity) {
 
         }
 
+        val dialog = builder.create()
         rootDialogElement.btSingUpin.setOnClickListener {
+            dialog.dismiss()
             if (index == DialogConst.SING_UP_STATE) {
                 accHelper.singUpWithEmail(
                     rootDialogElement.edSingEmail.text.toString(),
                     rootDialogElement.edSingPassword.text.toString()
                 )
             } else {
+                accHelper.singInWithEmail(
+                    rootDialogElement.edSingEmail.text.toString(),
+                    rootDialogElement.edSingPassword.text.toString()
+                )
 
             }
         }
 
-        builder.setView(rootDialogElement.root)
-        builder.show()
+
+        dialog.show()
     }
 }

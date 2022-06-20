@@ -16,6 +16,7 @@
     <string name="close">Close</string>
     <string name="avatar">Avatar</string>
     <string name="header_email">serglife777@gmail.com</string>
+    <string name="not_reg">Войдите или зарегистрируйтесь!</string>
 
     <!-- Sing dialog -->
     <string name="email_hint">Email</string>
@@ -24,6 +25,7 @@
     <string name="sing_in_action">Войти</string>
     <string name="forget_password">Забыли пароль?</string>
     <string name="sing_up_error">Зарегестрироваться не удалось</string>
+    <string name="sing_in_error">Войти не удалось</string>
     <string name="send_verification_error">Не удалось отправить email для подствержения.</string>
     <string name="send_verification_done">На вашу почту была отправленна ссылка для подвержения аккаунта.</string>
 
