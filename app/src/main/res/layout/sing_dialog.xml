@@ -22,7 +22,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:autofillHints=""
         android:ems="10"
@@ -31,7 +31,7 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvSingTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/tvDialogMessage" />
 
     <EditText
         android:id="@+id/edSingPassword"
@@ -69,4 +69,17 @@
         app:layout_constraintEnd_toEndOf="@+id/edSingEmail"
         app:layout_constraintStart_toStartOf="@+id/edSingEmail"
         app:layout_constraintTop_toBottomOf="@+id/btSingUpin" />
+
+    <TextView
+        android:id="@+id/tvDialogMessage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center_horizontal"
+        android:text="@string/email_reset_password_error"
+        android:textColor="@color/red"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/edSingEmail"
+        app:layout_constraintStart_toStartOf="@+id/edSingEmail"
+        app:layout_constraintTop_toBottomOf="@+id/tvSingTitle" />
 </androidx.constraintlayout.widget.ConstraintLayout>
