@@ -1,12 +1,17 @@
 package com.serglife.bulletinboard
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.common.api.ApiException
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -14,6 +19,7 @@ import com.serglife.bulletinboard.databinding.ActivityMainBinding
 import com.serglife.bulletinboard.ui.dialog.DialogConst.SING_IN_STATE
 import com.serglife.bulletinboard.ui.dialog.DialogConst.SING_UP_STATE
 import com.serglife.bulletinboard.ui.dialog.DialogHelper
+import com.serglife.bulletinboard.ui.dialog.GoogleConst
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var tvAccount: TextView
@@ -25,6 +31,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(ActivityMainBinding.inflate(layoutInflater).also { binding = it }.root)
         init()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(requestCode == GoogleConst.GOOGLE_SING_IN_REQUEST_CODE){
+           // Log.d("MyLog","on Activity Result!!!!!!!!!!!!")
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+
+            try {
+                val account = task.getResult(ApiException::class.java)
+                if(account != null){
+                    dialogHelper.accHelper.singInFireBaseWithGoogle(account.idToken!!)
+                }
+            }catch (e: ApiException){
+                Log.d("MyLog", "Api exception: ${e.message}")
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onStart() {

@@ -48,16 +48,14 @@
         app:layout_constraintTop_toBottomOf="@+id/edSingEmail" />
 
     <Button
-        android:id="@+id/btSingUpin"
+        android:id="@+id/btSingUpIn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
         android:text="@string/sing_up_action"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/edSingEmail"
         app:layout_constraintStart_toStartOf="@+id/edSingEmail"
-        app:layout_constraintTop_toBottomOf="@+id/edSingPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/btGoogleSingIn" />
 
     <Button
         android:id="@+id/btForgetP"
@@ -68,7 +66,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@+id/edSingEmail"
         app:layout_constraintStart_toStartOf="@+id/edSingEmail"
-        app:layout_constraintTop_toBottomOf="@+id/btSingUpin" />
+        app:layout_constraintTop_toBottomOf="@+id/btSingUpIn" />
 
     <TextView
         android:id="@+id/tvDialogMessage"
@@ -82,4 +80,13 @@
         app:layout_constraintEnd_toEndOf="@+id/edSingEmail"
         app:layout_constraintStart_toStartOf="@+id/edSingEmail"
         app:layout_constraintTop_toBottomOf="@+id/tvSingTitle" />
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/btGoogleSingIn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:buttonSize="standard"
+        app:layout_constraintEnd_toEndOf="@+id/edSingEmail"
+        app:layout_constraintStart_toStartOf="@+id/edSingEmail"
+        app:layout_constraintTop_toBottomOf="@+id/edSingPassword" />
 </androidx.constraintlayout.widget.ConstraintLayout>

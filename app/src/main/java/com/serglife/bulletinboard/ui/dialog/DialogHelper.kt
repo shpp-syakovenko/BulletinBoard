@@ -9,7 +9,7 @@ import com.serglife.bulletinboard.databinding.SingDialogBinding
 
 class DialogHelper(private val act: MainActivity) {
 
-    private val accHelper = AccountHelper(act)
+    val accHelper = AccountHelper(act)
 
     fun createDialog(index: Int) {
         val builder = AlertDialog.Builder(act)
@@ -19,11 +19,14 @@ class DialogHelper(private val act: MainActivity) {
         setDialogState(index, rootDialogElement)
 
         val dialog = builder.create()
-        rootDialogElement.btSingUpin.setOnClickListener {
+        rootDialogElement.btSingUpIn.setOnClickListener {
             setOnClickSingUpIn(dialog, index, rootDialogElement)
         }
         rootDialogElement.btForgetP.setOnClickListener {
             setOnClickResetPassword(rootDialogElement, dialog)
+        }
+        rootDialogElement.btGoogleSingIn.setOnClickListener {
+            accHelper.singInWithGoogle()
         }
         dialog.show()
     }
@@ -71,10 +74,10 @@ class DialogHelper(private val act: MainActivity) {
     ) {
         if (index == DialogConst.SING_UP_STATE) {
             rootDialogElement.tvSingTitle.text = act.resources.getString(R.string.ac_sing_up)
-            rootDialogElement.btSingUpin.text = act.resources.getString(R.string.sing_up_action)
+            rootDialogElement.btSingUpIn.text = act.resources.getString(R.string.sing_up_action)
         } else {
             rootDialogElement.tvSingTitle.text = act.resources.getString(R.string.ac_sing_in)
-            rootDialogElement.btSingUpin.text = act.resources.getString(R.string.sing_in_action)
+            rootDialogElement.btSingUpIn.text = act.resources.getString(R.string.sing_in_action)
             rootDialogElement.btForgetP.visibility = View.VISIBLE
         }
     }
