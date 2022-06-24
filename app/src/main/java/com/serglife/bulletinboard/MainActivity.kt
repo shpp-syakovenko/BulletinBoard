@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
@@ -20,6 +21,7 @@ import com.serglife.bulletinboard.ui.dialog.DialogConst.SING_IN_STATE
 import com.serglife.bulletinboard.ui.dialog.DialogConst.SING_UP_STATE
 import com.serglife.bulletinboard.ui.dialog.DialogHelper
 import com.serglife.bulletinboard.ui.dialog.GoogleConst
+import com.serglife.bulletinboard.ui.edit.EditAdsAct
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var tvAccount: TextView
@@ -31,6 +33,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(ActivityMainBinding.inflate(layoutInflater).also { binding = it }.root)
         init()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.id_new_ads -> {
+                val intent = Intent(this, EditAdsAct::class.java)
+                startActivity(intent)
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -57,6 +74,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun init() {
+        setSupportActionBar(binding.mainContent.toolbar)
         val toggle = ActionBarDrawerToggle(
             this,
             binding.drawerLayout,
@@ -97,6 +115,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.id_sing_out -> {
                 uiUpdate(null)
                 mAuth.signOut()
+                dialogHelper.accHelper.singOutGoogle()
             }
         }
         binding.drawerLayout.closeDrawer(GravityCompat.START)

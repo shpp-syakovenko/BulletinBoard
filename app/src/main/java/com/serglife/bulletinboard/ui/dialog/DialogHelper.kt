@@ -27,6 +27,7 @@ class DialogHelper(private val act: MainActivity) {
         }
         rootDialogElement.btGoogleSingIn.setOnClickListener {
             accHelper.singInWithGoogle()
+            dialog.dismiss()
         }
         dialog.show()
     }
