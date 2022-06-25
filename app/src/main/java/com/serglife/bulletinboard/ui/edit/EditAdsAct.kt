@@ -17,6 +17,7 @@ class EditAdsAct : AppCompatActivity() {
             android.R.layout.simple_spinner_item,
             CityHelper.getAllCountries(this)
         )
+
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spCountry.adapter = adapter
 
