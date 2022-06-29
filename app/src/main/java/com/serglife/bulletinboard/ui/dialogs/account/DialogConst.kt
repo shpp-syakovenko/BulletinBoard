@@ -1,4 +1,4 @@
-package com.serglife.bulletinboard.ui.dialog
+package com.serglife.bulletinboard.ui.dialogs.account
 
 object DialogConst {
     const val SING_UP_STATE = 0

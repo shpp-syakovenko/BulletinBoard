@@ -1,4 +1,4 @@
-package com.serglife.bulletinboard.ui.dialog
+package com.serglife.bulletinboard.ui.dialogs.account
 
 import android.view.View
 import android.widget.Toast

@@ -28,4 +28,20 @@ object CityHelper {
         }
         return list
     }
+    fun filerListData(list: List<String>, searchText: String?):List<String>{
+        val tempList = mutableListOf<String>()
+        tempList.clear()
+        if(searchText == null){
+            tempList.add("Not result")
+            return tempList
+        }
+
+        for (selection:String in list){
+            if (selection.lowercase().startsWith(searchText.lowercase())){
+                tempList.add(selection)
+            }
+        }
+        if (tempList.isEmpty()) tempList.add("Not result")
+        return tempList
+    }
 }

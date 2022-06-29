@@ -11,16 +11,15 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.serglife.bulletinboard.databinding.ActivityMainBinding
-import com.serglife.bulletinboard.ui.dialog.DialogConst.SING_IN_STATE
-import com.serglife.bulletinboard.ui.dialog.DialogConst.SING_UP_STATE
-import com.serglife.bulletinboard.ui.dialog.DialogHelper
-import com.serglife.bulletinboard.ui.dialog.GoogleConst
+import com.serglife.bulletinboard.ui.dialogs.account.DialogConst.SING_IN_STATE
+import com.serglife.bulletinboard.ui.dialogs.account.DialogConst.SING_UP_STATE
+import com.serglife.bulletinboard.ui.dialogs.account.DialogHelper
+import com.serglife.bulletinboard.ui.dialogs.account.GoogleConst
 import com.serglife.bulletinboard.ui.edit.EditAdsAct
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
