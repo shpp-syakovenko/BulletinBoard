@@ -22,12 +22,32 @@ object CityHelper {
                     list.add(countriesNames.getString(i))
                 }
             }
-
         } catch (e: IOException) {
-
         }
         return list
     }
+
+    fun getAllCities(context: Context, country: String): List<String> {
+        val list = mutableListOf<String>()
+        try {
+            val inputStream: InputStream = context.assets.open("countriesToCities.json")
+            val size = inputStream.available()
+            val bytesArray = ByteArray(size)
+            inputStream.read(bytesArray)
+            val jsonFile = String(bytesArray)
+            val jsonObject = JSONObject(jsonFile)
+            val citiesNames = jsonObject.getJSONArray(country)
+
+                for (i in 0 until citiesNames.length()) {
+                    list.add(citiesNames.getString(i))
+                }
+
+        } catch (e: IOException) {
+        }
+        return list
+    }
+
+
     fun filerListData(list: List<String>, searchText: String?):List<String>{
         val tempList = mutableListOf<String>()
         tempList.clear()

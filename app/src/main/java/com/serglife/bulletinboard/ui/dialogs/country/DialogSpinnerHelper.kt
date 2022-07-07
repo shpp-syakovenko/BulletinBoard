@@ -2,6 +2,7 @@ package com.serglife.bulletinboard.ui.dialogs.country
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.RecyclerView
@@ -10,10 +11,10 @@ import com.serglife.bulletinboard.utils.CityHelper
 
 class DialogSpinnerHelper {
 
-    fun showSpinnerDialog(context: Context, list: List<String>){
+    fun showSpinnerDialog(context: Context, list: List<String>, tvSelection: TextView){
         val dialog = AlertDialog.Builder(context).create()
         val rootView = LayoutInflater.from(context).inflate(R.layout.spinner_layout, null)
-        val adapter = RvDialogSpinnerAdapter(context, dialog)
+        val adapter = RvDialogSpinnerAdapter(dialog = dialog, tvSelection = tvSelection)
         val rvCountry = rootView.findViewById<RecyclerView>(R.id.rvSpinnerView)
         val sv = rootView.findViewById<SearchView>(R.id.svSpinner)
         rvCountry.adapter = adapter

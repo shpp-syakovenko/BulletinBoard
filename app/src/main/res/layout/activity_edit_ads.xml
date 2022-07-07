@@ -26,7 +26,9 @@
                 android:layout_height="200dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp" />
+                android:layout_marginEnd="5dp"
+                android:background="@android:drawable/editbox_background"
+                android:padding="10dp" />
 
             <TextView
                 android:id="@+id/tvCountry"
@@ -38,6 +40,18 @@
                 android:onClick="onClickSelectedCountry"
                 android:padding="10dp"
                 android:text="@string/selected_country"
+                android:textSize="22sp" />
+
+            <TextView
+                android:id="@+id/tvCity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@android:drawable/editbox_background"
+                android:gravity="center"
+                android:onClick="onClickSelectedCities"
+                android:padding="10dp"
+                android:text="@string/selected_city"
                 android:textSize="22sp" />
 
 

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.ui.edit.EditAdsAct
 
-class RvDialogSpinnerAdapter(val context: Context, val dialog: AlertDialog): RecyclerView.Adapter<RvDialogSpinnerAdapter.SpViewHolder>() {
+class RvDialogSpinnerAdapter(val dialog: AlertDialog, private val tvSelection: TextView): RecyclerView.Adapter<RvDialogSpinnerAdapter.SpViewHolder>() {
 
     val list = mutableListOf<String>()
 
@@ -19,7 +19,7 @@ class RvDialogSpinnerAdapter(val context: Context, val dialog: AlertDialog): Rec
         viewType: Int
     ): SpViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.sp_list_item, parent, false)
-        return SpViewHolder(view, context, dialog)
+        return SpViewHolder(view, dialog = dialog, tvSelection = tvSelection)
 
     }
 
@@ -40,7 +40,7 @@ class RvDialogSpinnerAdapter(val context: Context, val dialog: AlertDialog): Rec
         notifyDataSetChanged()
     }
 
-    class SpViewHolder(itemView: View, val context: Context,val dialog: AlertDialog) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    class SpViewHolder(itemView: View, val dialog: AlertDialog, private val tvSelection: TextView) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         private var currentTextCountry = ""
 
         fun setData(text: String){
@@ -51,7 +51,7 @@ class RvDialogSpinnerAdapter(val context: Context, val dialog: AlertDialog): Rec
         }
 
         override fun onClick(view: View?) {
-            (context as EditAdsAct).binding.tvCountry.text = currentTextCountry
+            tvSelection.text = currentTextCountry
             dialog.dismiss()
         }
 

@@ -35,6 +35,7 @@
     <!-- Toast message -->
     <string name="link_done">Email подключен к Google аккаунту.</string>
     <string name="enter_to_google">У вас уже есть Google акаунт с такой почтой, войдите в аккаунт что бы подсоединить почту.</string>
+    <string name="choose_country_first">Выберите страну.</string>
 
     <!-- Edit activity -->
     <string name="selected_country">*Выберите страну</string>
