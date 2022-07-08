@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1027480987976",
+    "project_id": "bulletinboard-71a8f",
+    "storage_bucket": "bulletinboard-71a8f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1027480987976:android:5153e809c67d8b05b42b7d",
+        "android_client_info": {
+          "package_name": "com.serglife.bulletinboard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1027480987976-s6hsjgn0gllf10ak39ogkhvmgf4csvju.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.serglife.bulletinboard",
+            "certificate_hash": "b08f37a0f172a7deb42b756eded9f332aadc81ae"
+          }
+        },
+        {
+          "client_id": "1027480987976-5ie8ec1dktacn06o2npe5bcr9imtsblv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDx_utczCfiXt37Rf1oPi6dAyqZMqAMBbs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1027480987976-5ie8ec1dktacn06o2npe5bcr9imtsblv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
