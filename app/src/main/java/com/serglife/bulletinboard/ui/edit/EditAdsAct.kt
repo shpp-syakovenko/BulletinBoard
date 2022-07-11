@@ -4,18 +4,19 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
 import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.databinding.ActivityEditAdsBinding
+import com.serglife.bulletinboard.fragment.common.FragmentCloseInterface
+import com.serglife.bulletinboard.fragment.ImageListFragment
 import com.serglife.bulletinboard.ui.dialogs.country.DialogSpinnerHelper
 import com.serglife.bulletinboard.utils.CityHelper
 import com.serglife.bulletinboard.utils.ImagePiker
 
-class EditAdsAct : AppCompatActivity() {
+class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
 
     lateinit var binding: ActivityEditAdsBinding
     private lateinit var dialog: DialogSpinnerHelper
@@ -33,6 +34,14 @@ class EditAdsAct : AppCompatActivity() {
             if (data != null){
                 val valueReturn = data.getStringArrayListExtra(Pix.IMAGE_RESULTS)
 
+                if(valueReturn?.size!! > 1) {
+                    binding.scrollViewMain.visibility = View.GONE
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.place_holder, ImageListFragment(this, valueReturn))
+                        .commit()
+                }
+
+
             }
         }
     }
@@ -47,7 +56,7 @@ class EditAdsAct : AppCompatActivity() {
         when (requestCode) {
             PermUtil.REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    ImagePiker.getImages(this)
+                    ImagePiker.getImages(this,3)
                 } else {
                     Toast.makeText(
                         this,
@@ -87,6 +96,10 @@ class EditAdsAct : AppCompatActivity() {
     }
 
     fun onClickGetImages(view:View){
-        ImagePiker.getImages(this)
+        ImagePiker.getImages(this,3)
+    }
+
+    override fun onClose() {
+        binding.scrollViewMain.visibility = View.VISIBLE
     }
 }

@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/place_holder"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:drawable/editbox_background"
     tools:context=".ui.edit.EditAdsAct">
 
     <ScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:id="@+id/scrollViewMain"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,8 +37,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" >
-                </androidx.viewpager2.widget.ViewPager2>
+                    app:layout_constraintTop_toTopOf="parent"></androidx.viewpager2.widget.ViewPager2>
 
                 <ImageButton
                     android:id="@+id/imageButton"
@@ -76,4 +78,4 @@
 
         </LinearLayout>
     </ScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
