@@ -4,17 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.Fragment
-import com.serglife.bulletinboard.R
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.serglife.bulletinboard.databinding.ListImageFragmentBinding
 import com.serglife.bulletinboard.fragment.adapters.SelectImageRVAdapter
 import com.serglife.bulletinboard.fragment.common.FragmentCloseInterface
 import com.serglife.bulletinboard.fragment.common.SelectImageItem
+import com.serglife.bulletinboard.utils.ItemTouchMoveCallback
 
 class ImageListFragment(val onFragmentCloseInterface: FragmentCloseInterface, val list: List<String>): Fragment() {
+
     private lateinit var binding: ListImageFragmentBinding
     val adapter = SelectImageRVAdapter()
+    private val dragCallback = ItemTouchMoveCallback(adapter)
+    val touchHelper = ItemTouchHelper(dragCallback)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,6 +30,7 @@ class ImageListFragment(val onFragmentCloseInterface: FragmentCloseInterface, va
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        touchHelper.attachToRecyclerView(binding.rvSelectImage)
         binding.rvSelectImage.adapter = adapter
 
         val updateList = mutableListOf<SelectImageItem>()

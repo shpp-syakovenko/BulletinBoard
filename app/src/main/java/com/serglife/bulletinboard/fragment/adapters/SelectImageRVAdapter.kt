@@ -8,8 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.databinding.SelectImageFragmentItemBinding
 import com.serglife.bulletinboard.fragment.common.SelectImageItem
+import com.serglife.bulletinboard.utils.ItemTouchMoveCallback
 
-class SelectImageRVAdapter : RecyclerView.Adapter<SelectImageRVAdapter.ImageHolder>() {
+class SelectImageRVAdapter : RecyclerView.Adapter<SelectImageRVAdapter.ImageHolder>(), ItemTouchMoveCallback.ItemTouchAdapter {
 
     val list = mutableListOf<SelectImageItem>()
 
@@ -34,6 +35,13 @@ class SelectImageRVAdapter : RecyclerView.Adapter<SelectImageRVAdapter.ImageHold
         notifyDataSetChanged()
     }
 
+    override fun onMove(start: Int, finish: Int) {
+        val targetItem = list[finish]
+        list[finish] = list[start]
+        list[start] = targetItem
+        notifyItemMoved(start, finish)
+    }
+
     class ImageHolder(val itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding = SelectImageFragmentItemBinding.bind(itemView)
         fun bind(item: SelectImageItem) {
@@ -41,4 +49,6 @@ class SelectImageRVAdapter : RecyclerView.Adapter<SelectImageRVAdapter.ImageHold
             binding.imageContentItem.setImageURI(Uri.parse(item.imageUri))
         }
     }
+
+
 }
