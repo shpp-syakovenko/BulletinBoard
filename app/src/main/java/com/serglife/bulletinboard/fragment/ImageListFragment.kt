@@ -1,18 +1,25 @@
 package com.serglife.bulletinboard.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
+import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.databinding.ListImageFragmentBinding
 import com.serglife.bulletinboard.fragment.adapters.SelectImageRVAdapter
 import com.serglife.bulletinboard.fragment.common.FragmentCloseInterface
 import com.serglife.bulletinboard.fragment.common.SelectImageItem
+import com.serglife.bulletinboard.utils.ImagePiker
 import com.serglife.bulletinboard.utils.ItemTouchMoveCallback
 
-class ImageListFragment(val onFragmentCloseInterface: FragmentCloseInterface, val list: List<String>): Fragment() {
+class ImageListFragment(
+    val onFragmentCloseInterface: FragmentCloseInterface,
+    val list: List<String>
+) : Fragment() {
 
     private lateinit var binding: ListImageFragmentBinding
     val adapter = SelectImageRVAdapter()
@@ -29,22 +36,50 @@ class ImageListFragment(val onFragmentCloseInterface: FragmentCloseInterface, va
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setUpToolBar()
 
         touchHelper.attachToRecyclerView(binding.rvSelectImage)
         binding.rvSelectImage.adapter = adapter
 
         val updateList = mutableListOf<SelectImageItem>()
-        for(i in list.indices){
+        for (i in list.indices) {
             updateList.add(SelectImageItem(i.toString(), list[i]))
         }
-        adapter.updateAdapter(updateList)
-        binding.bBack.setOnClickListener {
+        adapter.updateAdapter(updateList, true)
+
+    }
+
+    private fun setUpToolBar() {
+        binding.tbListImage.inflateMenu(R.menu.menu_choose_image)
+        val deleteImageItem = binding.tbListImage.menu.findItem(R.id.id_delete_image)
+        val addImageItem = binding.tbListImage.menu.findItem(R.id.id_add_image)
+
+        binding.tbListImage.setNavigationOnClickListener {
             activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
         }
+
+        deleteImageItem.setOnMenuItemClickListener {
+            adapter.updateAdapter(listOf(), true)
+            true
+        }
+
+        addImageItem.setOnMenuItemClickListener {
+            val imageCount = ImagePiker.MAX_IMAGE_COUNT - adapter.list.size
+            ImagePiker.getImages(activity as AppCompatActivity, imageCount)
+            true
+        }
+    }
+
+    fun updateAdapter(newList: MutableList<String>){
+        val updateList = mutableListOf<SelectImageItem>()
+        for (i in adapter.list.size until newList.size + adapter.list.size) {
+            updateList.add(SelectImageItem(i.toString(), newList[i - adapter.list.size]))
+        }
+        adapter.updateAdapter(updateList, false)
     }
 
     override fun onDetach() {
         super.onDetach()
-        onFragmentCloseInterface.onClose()
+        onFragmentCloseInterface.onClose(adapter.list)
     }
 }

@@ -12,14 +12,18 @@ import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.databinding.ActivityEditAdsBinding
 import com.serglife.bulletinboard.fragment.common.FragmentCloseInterface
 import com.serglife.bulletinboard.fragment.ImageListFragment
+import com.serglife.bulletinboard.fragment.adapters.ImageAdapter
+import com.serglife.bulletinboard.fragment.common.SelectImageItem
 import com.serglife.bulletinboard.ui.dialogs.country.DialogSpinnerHelper
 import com.serglife.bulletinboard.utils.CityHelper
 import com.serglife.bulletinboard.utils.ImagePiker
 
 class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
 
+    private var chooseImageFragment: ImageListFragment? = null
     lateinit var binding: ActivityEditAdsBinding
     private lateinit var dialog: DialogSpinnerHelper
+    private lateinit var imageAdapter: ImageAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -30,15 +34,20 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(resultCode == RESULT_OK && requestCode == ImagePiker.REQUEST_CODE_GET_IMAGES){
-            if (data != null){
+
+        if (resultCode == RESULT_OK && requestCode == ImagePiker.REQUEST_CODE_GET_IMAGES) {
+            if (data != null) {
                 val valueReturn = data.getStringArrayListExtra(Pix.IMAGE_RESULTS)
 
-                if(valueReturn?.size!! > 1) {
+                if (valueReturn?.size!! > 1 && chooseImageFragment == null) {
+                    chooseImageFragment = ImageListFragment(this, valueReturn)
                     binding.scrollViewMain.visibility = View.GONE
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.place_holder, ImageListFragment(this, valueReturn))
+                        .replace(R.id.place_holder, chooseImageFragment!!)
                         .commit()
+
+                } else if (chooseImageFragment != null) {
+                    chooseImageFragment?.updateAdapter(valueReturn)
                 }
 
 
@@ -56,7 +65,7 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         when (requestCode) {
             PermUtil.REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    ImagePiker.getImages(this,3)
+                    ImagePiker.getImages(this, 3)
                 } else {
                     Toast.makeText(
                         this,
@@ -70,6 +79,8 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
 
     private fun init() {
         dialog = DialogSpinnerHelper()
+        imageAdapter = ImageAdapter()
+        binding.vpImages.adapter = imageAdapter
 
     }
 
@@ -95,11 +106,13 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         }
     }
 
-    fun onClickGetImages(view:View){
-        ImagePiker.getImages(this,3)
+    fun onClickGetImages(view: View) {
+        ImagePiker.getImages(this, 3)
     }
 
-    override fun onClose() {
+    override fun onClose(list: List<SelectImageItem>) {
         binding.scrollViewMain.visibility = View.VISIBLE
+        imageAdapter.updateAdapter(list)
+        chooseImageFragment = null
     }
 }

@@ -29,8 +29,8 @@ class SelectImageRVAdapter : RecyclerView.Adapter<SelectImageRVAdapter.ImageHold
         return list.size
     }
 
-    fun updateAdapter(newList: List<SelectImageItem>){
-        list.clear()
+    fun updateAdapter(newList: List<SelectImageItem>, needClear: Boolean){
+        if(needClear) list.clear()
         list.addAll(newList)
         notifyDataSetChanged()
     }
@@ -38,8 +38,15 @@ class SelectImageRVAdapter : RecyclerView.Adapter<SelectImageRVAdapter.ImageHold
     override fun onMove(start: Int, finish: Int) {
         val targetItem = list[finish]
         list[finish] = list[start]
+        val titleStart = list[finish].title
+        list[finish].title = targetItem.title
         list[start] = targetItem
+        list[start].title = titleStart
         notifyItemMoved(start, finish)
+    }
+
+    override fun onClear() {
+        notifyDataSetChanged()
     }
 
     class ImageHolder(val itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -1,5 +1,5 @@
 package com.serglife.bulletinboard.fragment.common
 
 interface FragmentCloseInterface {
-    fun onClose()
+    fun onClose(list: List<SelectImageItem>)
 }
