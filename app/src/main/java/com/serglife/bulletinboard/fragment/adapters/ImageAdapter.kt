@@ -7,11 +7,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.databinding.ImageAdapterItemBinding
-import com.serglife.bulletinboard.fragment.common.SelectImageItem
 
 class ImageAdapter : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
 
-    val list = mutableListOf<SelectImageItem>()
+    val list = mutableListOf<String>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -20,14 +19,14 @@ class ImageAdapter : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        holder.bind(list[position].imageUri)
+        holder.bind(list[position])
     }
 
     override fun getItemCount(): Int {
         return list.size
     }
 
-    fun updateAdapter(newList: List<SelectImageItem>){
+    fun updateAdapter(newList: List<String>){
         list.clear()
         list.addAll(newList)
         notifyDataSetChanged()
