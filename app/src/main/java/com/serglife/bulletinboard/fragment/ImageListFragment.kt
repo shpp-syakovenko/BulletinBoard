@@ -58,13 +58,19 @@ class ImageListFragment(
 
         addImageItem.setOnMenuItemClickListener {
             val imageCount = ImagePiker.MAX_IMAGE_COUNT - adapter.list.size
-            ImagePiker.getImages(activity as AppCompatActivity, imageCount)
+            ImagePiker.getImages(activity as AppCompatActivity, imageCount, ImagePiker.REQUEST_CODE_GET_IMAGES)
             true
         }
     }
 
     fun updateAdapter(newList: MutableList<String>){
         adapter.updateAdapter(newList, false)
+    }
+
+    fun setSingleImage(uri: String, position: Int){
+        adapter.list[position] = uri
+        adapter.notifyDataSetChanged()
+
     }
 
     override fun onDetach() {

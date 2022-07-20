@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.databinding.SelectImageFragmentItemBinding
+import com.serglife.bulletinboard.ui.edit.EditAdsAct
+import com.serglife.bulletinboard.utils.ImagePiker
 import com.serglife.bulletinboard.utils.ItemTouchMoveCallback
 
 class SelectImageRVAdapter : RecyclerView.Adapter<SelectImageRVAdapter.ImageHolder>(), ItemTouchMoveCallback.ItemTouchAdapter {
@@ -46,10 +48,16 @@ class SelectImageRVAdapter : RecyclerView.Adapter<SelectImageRVAdapter.ImageHold
     }
 
     class ImageHolder(val itemView: View, val context: Context) : RecyclerView.ViewHolder(itemView) {
+
         private val binding = SelectImageFragmentItemBinding.bind(itemView)
+
         fun bind(item: String) {
             binding.tvTitleImage.text = context.resources.getStringArray(R.array.title_array)[adapterPosition]
             binding.imageContentItem.setImageURI(Uri.parse(item))
+            binding.imEditButton.setOnClickListener{
+                ImagePiker.getImages(context as EditAdsAct, 1, ImagePiker.REQUEST_CODE_GET_SINGLE_IMAGE)
+                context.editImagePos = adapterPosition
+            }
         }
     }
 }

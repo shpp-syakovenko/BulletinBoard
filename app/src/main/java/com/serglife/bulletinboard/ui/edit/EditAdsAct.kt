@@ -24,6 +24,7 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
     lateinit var binding: ActivityEditAdsBinding
     private lateinit var dialog: DialogSpinnerHelper
     private lateinit var imageAdapter: ImageAdapter
+    var editImagePos = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +50,11 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
                     chooseImageFragment?.updateAdapter(valueReturn)
                 }
             }
+        }else if(resultCode == RESULT_OK && requestCode == ImagePiker.REQUEST_CODE_GET_SINGLE_IMAGE){
+            if (data != null){
+                val uris = data.getStringArrayListExtra(Pix.IMAGE_RESULTS)
+                chooseImageFragment?.setSingleImage(uris?.get(0)!!, editImagePos)
+            }
         }
     }
 
@@ -70,7 +76,7 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         when (requestCode) {
             PermUtil.REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    ImagePiker.getImages(this, 3)
+                    ImagePiker.getImages(this, 3, ImagePiker.REQUEST_CODE_GET_IMAGES)
                 } else {
                     Toast.makeText(
                         this,
@@ -106,7 +112,7 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
 
     fun onClickGetImages(view: View) {
         if (imageAdapter.list.size == 0) {
-            ImagePiker.getImages(this, 3)
+            ImagePiker.getImages(this, 3, ImagePiker.REQUEST_CODE_GET_IMAGES)
         } else {
             openChooseImageFragment(imageAdapter.list)
         }
