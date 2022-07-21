@@ -46,5 +46,14 @@
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_edit" />
+        app:srcCompat="@drawable/ic_edit" />
+
+    <ImageButton
+        android:id="@+id/imDeleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="@+id/imEditButton"
+        app:layout_constraintTop_toBottomOf="@+id/imEditButton"
+        app:srcCompat="@drawable/ic_delete_image" />
 </androidx.constraintlayout.widget.ConstraintLayout>

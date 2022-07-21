@@ -19,7 +19,7 @@ class SelectImageRVAdapter : RecyclerView.Adapter<SelectImageRVAdapter.ImageHold
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.select_image_fragment_item, parent, false)
-        return ImageHolder(view, parent.context)
+        return ImageHolder(view, parent.context, this)
     }
 
     override fun onBindViewHolder(holder: ImageHolder, position: Int) {
@@ -47,7 +47,7 @@ class SelectImageRVAdapter : RecyclerView.Adapter<SelectImageRVAdapter.ImageHold
         notifyDataSetChanged()
     }
 
-    class ImageHolder(val itemView: View, val context: Context) : RecyclerView.ViewHolder(itemView) {
+    class ImageHolder(val itemView: View, val context: Context,val adapter: SelectImageRVAdapter) : RecyclerView.ViewHolder(itemView) {
 
         private val binding = SelectImageFragmentItemBinding.bind(itemView)
 
@@ -57,6 +57,11 @@ class SelectImageRVAdapter : RecyclerView.Adapter<SelectImageRVAdapter.ImageHold
             binding.imEditButton.setOnClickListener{
                 ImagePiker.getImages(context as EditAdsAct, 1, ImagePiker.REQUEST_CODE_GET_SINGLE_IMAGE)
                 context.editImagePos = adapterPosition
+            }
+            binding.imDeleteButton.setOnClickListener {
+                adapter.list.removeAt(adapterPosition)
+                adapter.notifyItemRemoved(adapterPosition)
+                for(i in 0 until adapter.list.size) adapter.notifyItemChanged(i)
             }
         }
     }
