@@ -11,6 +11,7 @@ import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.databinding.ListImageFragmentBinding
 import com.serglife.bulletinboard.fragment.adapters.SelectImageRVAdapter
 import com.serglife.bulletinboard.fragment.common.FragmentCloseInterface
+import com.serglife.bulletinboard.utils.ImageManager
 import com.serglife.bulletinboard.utils.ImagePiker
 import com.serglife.bulletinboard.utils.ItemTouchMoveCallback
 
@@ -38,7 +39,8 @@ class ImageListFragment(
 
         touchHelper.attachToRecyclerView(binding.rvSelectImage)
         binding.rvSelectImage.adapter = adapter
-        adapter.updateAdapter(list, true)
+        ImageManager.imageResize(list)
+        //adapter.updateAdapter(list, true)
 
     }
 

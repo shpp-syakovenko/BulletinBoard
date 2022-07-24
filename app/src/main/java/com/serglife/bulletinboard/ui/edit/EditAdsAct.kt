@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.fxn.pix.Pix
@@ -15,6 +16,7 @@ import com.serglife.bulletinboard.fragment.ImageListFragment
 import com.serglife.bulletinboard.fragment.adapters.ImageAdapter
 import com.serglife.bulletinboard.ui.dialogs.country.DialogSpinnerHelper
 import com.serglife.bulletinboard.utils.CityHelper
+import com.serglife.bulletinboard.utils.ImageManager
 import com.serglife.bulletinboard.utils.ImagePiker
 import java.util.ArrayList
 
@@ -47,7 +49,10 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
                 if (valueReturn?.size!! > 1 && chooseImageFragment == null) {
                     openChooseImageFragment(valueReturn)
                 } else if (valueReturn.size == 1 && chooseImageFragment == null) {
+
                     imageAdapter.updateAdapter(valueReturn)
+                    val tempList = ImageManager.getImageSize(valueReturn[0])
+
                 }else if (chooseImageFragment != null) {
                     chooseImageFragment?.updateAdapter(valueReturn)
                 }
