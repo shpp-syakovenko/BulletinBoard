@@ -1,6 +1,7 @@
 package com.serglife.bulletinboard.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,10 @@ import com.serglife.bulletinboard.fragment.common.FragmentCloseInterface
 import com.serglife.bulletinboard.utils.ImageManager
 import com.serglife.bulletinboard.utils.ImagePiker
 import com.serglife.bulletinboard.utils.ItemTouchMoveCallback
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class ImageListFragment(
     val onFragmentCloseInterface: FragmentCloseInterface,
@@ -24,6 +29,7 @@ class ImageListFragment(
     val adapter = SelectImageRVAdapter()
     private val dragCallback = ItemTouchMoveCallback(adapter)
     val touchHelper = ItemTouchHelper(dragCallback)
+    private lateinit var job: Job
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,7 +45,12 @@ class ImageListFragment(
 
         touchHelper.attachToRecyclerView(binding.rvSelectImage)
         binding.rvSelectImage.adapter = adapter
-        ImageManager.imageResize(list)
+
+        job = CoroutineScope(Dispatchers.Main).launch {
+            val result =ImageManager.imageResize(list)
+            Log.d("MyLog","Result: $result")
+        }
+
         //adapter.updateAdapter(list, true)
 
     }
@@ -78,5 +89,6 @@ class ImageListFragment(
     override fun onDetach() {
         super.onDetach()
         onFragmentCloseInterface.onClose(adapter.list)
+        job.cancel()
     }
 }

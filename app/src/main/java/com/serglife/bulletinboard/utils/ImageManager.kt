@@ -4,6 +4,8 @@ import android.graphics.BitmapFactory
 import android.util.Log
 import android.widget.HeterogeneousExpandableList
 import androidx.exifinterface.media.ExifInterface
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 import java.io.File
 
@@ -39,12 +41,11 @@ object ImageManager {
         return rotation
     }
 
-    fun imageResize(uris: List<String>){
+    suspend fun imageResize(uris: List<String>):String = withContext(Dispatchers.IO){
         val tempList = mutableListOf<List<Int>>()
 
         for (i in uris.indices){
             val size = getImageSize(uris[i])
-            Log.d("MyLog","WIDTH: ${size[WIDTH]} HEIGHT: ${size[HEIGHT]}")
             val imageRatio = size[WIDTH].toFloat() / size[HEIGHT].toFloat()
 
             if(imageRatio > 1){ // width > height
@@ -60,8 +61,7 @@ object ImageManager {
                     tempList.add(listOf(size[WIDTH], size[HEIGHT]))
                 }
             }
-            Log.d("MyLog","WIDTH: ${tempList[i][WIDTH]} HEIGHT: ${tempList[i][HEIGHT]}")
-
         }
+        return@withContext "Done"
     }
 }
