@@ -3,7 +3,9 @@ package com.serglife.bulletinboard.fragment
 import android.app.Activity
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
@@ -16,6 +18,7 @@ import com.serglife.bulletinboard.databinding.ListImageFragmentBinding
 import com.serglife.bulletinboard.fragment.adapters.SelectImageRVAdapter
 import com.serglife.bulletinboard.fragment.common.FragmentCloseInterface
 import com.serglife.bulletinboard.ui.dialogs.dialog.ProgressDialog
+import com.serglife.bulletinboard.utils.AdapterCallback
 import com.serglife.bulletinboard.utils.ImageManager
 import com.serglife.bulletinboard.utils.ImagePiker
 import com.serglife.bulletinboard.utils.ItemTouchMoveCallback
@@ -27,13 +30,14 @@ import kotlinx.coroutines.launch
 class ImageListFragment(
     val onFragmentCloseInterface: FragmentCloseInterface,
     val list: List<String>?
-) : Fragment() {
+) : Fragment(), AdapterCallback {
 
     private lateinit var binding: ListImageFragmentBinding
     val adapter = SelectImageRVAdapter()
     private val dragCallback = ItemTouchMoveCallback(adapter)
     val touchHelper = ItemTouchHelper(dragCallback)
     private var job: Job? = null
+    private var addImageItem: MenuItem? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,21 +50,32 @@ class ImageListFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpToolBar()
+        init()
 
         touchHelper.attachToRecyclerView(binding.rvSelectImage)
-        binding.rvSelectImage.adapter = adapter
-
         if (list != null) resizeSelectedImages(list, true)
+    }
+
+    private fun init(){
+        adapter.adapterCallback = this
+        binding.rvSelectImage.adapter = adapter
+    }
+
+
+
+    override fun onItemDelete() {
+        addImageItem?.isVisible = true
     }
 
     fun updateAdapterFromEdit(bitmapList: List<Bitmap>){
         adapter.updateAdapter(bitmapList, true)
+        if(adapter.list.size >= ImagePiker.MAX_IMAGE_COUNT) addImageItem?.isVisible = false
     }
 
     private fun setUpToolBar() {
         binding.tbListImage.inflateMenu(R.menu.menu_choose_image)
         val deleteImageItem = binding.tbListImage.menu.findItem(R.id.id_delete_image)
-        val addImageItem = binding.tbListImage.menu.findItem(R.id.id_add_image)
+        addImageItem = binding.tbListImage.menu.findItem(R.id.id_add_image)
 
         binding.tbListImage.setNavigationOnClickListener {
             activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
@@ -68,10 +83,11 @@ class ImageListFragment(
 
         deleteImageItem.setOnMenuItemClickListener {
             adapter.updateAdapter(listOf(), true)
+            addImageItem?.isVisible = true
             true
         }
 
-        addImageItem.setOnMenuItemClickListener {
+        addImageItem?.setOnMenuItemClickListener {
             val imageCount = ImagePiker.MAX_IMAGE_COUNT - adapter.list.size
             ImagePiker.getImages(
                 activity as AppCompatActivity,
@@ -106,6 +122,7 @@ class ImageListFragment(
             val bitmapList = ImageManager.imageResize(newList)
             dialog.dismiss()
             adapter.updateAdapter(bitmapList, needClear)
+            if(adapter.list.size >= ImagePiker.MAX_IMAGE_COUNT) addImageItem?.isVisible = false
         }
     }
 
@@ -114,4 +131,6 @@ class ImageListFragment(
         onFragmentCloseInterface.onClose(adapter.list)
         job?.cancel()
     }
+
+
 }

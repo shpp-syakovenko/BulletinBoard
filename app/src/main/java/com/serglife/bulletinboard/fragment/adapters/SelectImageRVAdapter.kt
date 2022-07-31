@@ -10,12 +10,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.databinding.SelectImageFragmentItemBinding
 import com.serglife.bulletinboard.ui.edit.EditAdsAct
+import com.serglife.bulletinboard.utils.AdapterCallback
+import com.serglife.bulletinboard.utils.ImageManager
 import com.serglife.bulletinboard.utils.ImagePiker
 import com.serglife.bulletinboard.utils.ItemTouchMoveCallback
 
 class SelectImageRVAdapter : RecyclerView.Adapter<SelectImageRVAdapter.ImageHolder>(), ItemTouchMoveCallback.ItemTouchAdapter {
 
     val list = mutableListOf<Bitmap>()
+    var adapterCallback: AdapterCallback? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageHolder {
         val view = LayoutInflater.from(parent.context)
@@ -54,6 +57,7 @@ class SelectImageRVAdapter : RecyclerView.Adapter<SelectImageRVAdapter.ImageHold
 
         fun bind(bitmap: Bitmap) {
             binding.tvTitleImage.text = context.resources.getStringArray(R.array.title_array)[adapterPosition]
+            ImageManager.chooseScaleType(binding.imageContentItem, bitmap)
             binding.imageContentItem.setImageBitmap(bitmap)
             binding.imEditButton.setOnClickListener{
                 ImagePiker.getImages(context as EditAdsAct, 1, ImagePiker.REQUEST_CODE_GET_SINGLE_IMAGE)
@@ -63,6 +67,7 @@ class SelectImageRVAdapter : RecyclerView.Adapter<SelectImageRVAdapter.ImageHold
                 adapter.list.removeAt(adapterPosition)
                 adapter.notifyItemRemoved(adapterPosition)
                 for(i in 0 until adapter.list.size) adapter.notifyItemChanged(i)
+                adapter.adapterCallback?.onItemDelete()
             }
         }
     }
