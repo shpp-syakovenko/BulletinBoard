@@ -2,6 +2,7 @@ package com.serglife.bulletinboard.ui.edit
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -18,20 +19,30 @@ import com.serglife.bulletinboard.ui.dialogs.country.DialogSpinnerHelper
 import com.serglife.bulletinboard.utils.CityHelper
 import com.serglife.bulletinboard.utils.ImageManager
 import com.serglife.bulletinboard.utils.ImagePiker
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import java.util.ArrayList
 
 class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
 
-    private var chooseImageFragment: ImageListFragment? = null
+    var chooseImageFragment: ImageListFragment? = null
     lateinit var binding: ActivityEditAdsBinding
     private lateinit var dialog: DialogSpinnerHelper
-    private lateinit var imageAdapter: ImageAdapter
+    lateinit var imageAdapter: ImageAdapter
+    var job: Job? = null
     var editImagePos = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(ActivityEditAdsBinding.inflate(layoutInflater).also { binding = it }.root)
         init()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        job?.cancel()
     }
 
     private fun init() {
@@ -42,30 +53,10 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        if (resultCode == RESULT_OK && requestCode == ImagePiker.REQUEST_CODE_GET_IMAGES) {
-            if (data != null) {
-                val valueReturn = data.getStringArrayListExtra(Pix.IMAGE_RESULTS)
-                if (valueReturn?.size!! > 1 && chooseImageFragment == null) {
-                    openChooseImageFragment(valueReturn)
-                } else if (valueReturn.size == 1 && chooseImageFragment == null) {
-
-                    imageAdapter.updateAdapter(valueReturn)
-                    val tempList = ImageManager.getImageSize(valueReturn[0])
-
-                }else if (chooseImageFragment != null) {
-                    chooseImageFragment?.updateAdapter(valueReturn)
-                }
-            }
-        }else if(resultCode == RESULT_OK && requestCode == ImagePiker.REQUEST_CODE_GET_SINGLE_IMAGE){
-            if (data != null){
-                val uris = data.getStringArrayListExtra(Pix.IMAGE_RESULTS)
-                chooseImageFragment?.setSingleImage(uris?.get(0)!!, editImagePos)
-            }
-        }
+        ImagePiker.showSelectedImages(resultCode, requestCode, data, this)
     }
 
-    private fun openChooseImageFragment(valueReturn: List<String>) {
+    fun openChooseImageFragment(valueReturn: List<String>?) {
         chooseImageFragment = ImageListFragment(this, valueReturn)
         binding.scrollViewMain.visibility = View.GONE
         supportFragmentManager.beginTransaction()
@@ -119,14 +110,15 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
 
     fun onClickGetImages(view: View) {
         if (imageAdapter.list.size == 0) {
-            ImagePiker.getImages(this, 3, ImagePiker.REQUEST_CODE_GET_IMAGES)
+            ImagePiker.getImages(this, ImagePiker.MAX_IMAGE_COUNT, ImagePiker.REQUEST_CODE_GET_IMAGES)
         } else {
-            openChooseImageFragment(imageAdapter.list)
+            openChooseImageFragment(null)
+            chooseImageFragment?.updateAdapterFromEdit(imageAdapter.list)
         }
     }
 
     // Realize interface
-    override fun onClose(list: List<String>) {
+    override fun onClose(list: List<Bitmap>) {
         binding.scrollViewMain.visibility = View.VISIBLE
         imageAdapter.updateAdapter(list)
         chooseImageFragment = null

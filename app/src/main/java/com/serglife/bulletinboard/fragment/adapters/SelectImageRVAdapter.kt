@@ -1,6 +1,7 @@
 package com.serglife.bulletinboard.fragment.adapters
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +15,7 @@ import com.serglife.bulletinboard.utils.ItemTouchMoveCallback
 
 class SelectImageRVAdapter : RecyclerView.Adapter<SelectImageRVAdapter.ImageHolder>(), ItemTouchMoveCallback.ItemTouchAdapter {
 
-    val list = mutableListOf<String>()
+    val list = mutableListOf<Bitmap>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageHolder {
         val view = LayoutInflater.from(parent.context)
@@ -30,7 +31,7 @@ class SelectImageRVAdapter : RecyclerView.Adapter<SelectImageRVAdapter.ImageHold
         return list.size
     }
 
-    fun updateAdapter(newList: List<String>, needClear: Boolean){
+    fun updateAdapter(newList: List<Bitmap>, needClear: Boolean){
         if(needClear) list.clear()
         list.addAll(newList)
         notifyDataSetChanged()
@@ -51,9 +52,9 @@ class SelectImageRVAdapter : RecyclerView.Adapter<SelectImageRVAdapter.ImageHold
 
         private val binding = SelectImageFragmentItemBinding.bind(itemView)
 
-        fun bind(item: String) {
+        fun bind(bitmap: Bitmap) {
             binding.tvTitleImage.text = context.resources.getStringArray(R.array.title_array)[adapterPosition]
-            binding.imageContentItem.setImageURI(Uri.parse(item))
+            binding.imageContentItem.setImageBitmap(bitmap)
             binding.imEditButton.setOnClickListener{
                 ImagePiker.getImages(context as EditAdsAct, 1, ImagePiker.REQUEST_CODE_GET_SINGLE_IMAGE)
                 context.editImagePos = adapterPosition

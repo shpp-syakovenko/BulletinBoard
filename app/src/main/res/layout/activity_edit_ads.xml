@@ -37,7 +37,9 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"></androidx.viewpager2.widget.ViewPager2>
+                    app:layout_constraintTop_toTopOf="parent">
+
+                </androidx.viewpager2.widget.ViewPager2>
 
                 <ImageButton
                     android:id="@+id/imageButton"
@@ -49,6 +51,17 @@
                     app:layout_constraintEnd_toEndOf="@+id/vpImages"
                     app:layout_constraintTop_toTopOf="@+id/vpImages"
                     app:srcCompat="@android:drawable/ic_menu_edit" />
+
+                <ProgressBar
+                    android:id="@+id/pBarLoad"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/vpImages"
+                    app:layout_constraintTop_toTopOf="@+id/vpImages" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView

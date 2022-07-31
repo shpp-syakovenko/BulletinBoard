@@ -1,5 +1,6 @@
 package com.serglife.bulletinboard.fragment.adapters
 
+import android.graphics.Bitmap
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +11,7 @@ import com.serglife.bulletinboard.databinding.ImageAdapterItemBinding
 
 class ImageAdapter : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
 
-    val list = mutableListOf<String>()
+    val list = mutableListOf<Bitmap>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -26,7 +27,7 @@ class ImageAdapter : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
         return list.size
     }
 
-    fun updateAdapter(newList: List<String>){
+    fun updateAdapter(newList: List<Bitmap>){
         list.clear()
         list.addAll(newList)
         notifyDataSetChanged()
@@ -34,8 +35,8 @@ class ImageAdapter : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
 
     class ImageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val binding = ImageAdapterItemBinding.bind(view)
-        fun bind(uri: String) {
-            binding.imageItem.setImageURI(Uri.parse(uri))
+        fun bind(bitmap: Bitmap) {
+            binding.imageItem.setImageBitmap(bitmap)
         }
     }
 }
