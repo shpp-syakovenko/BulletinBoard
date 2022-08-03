@@ -18,6 +18,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="?attr/homeAsUpIndicator" />
 
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:adSize="BANNER"
+        app:adUnitId="@string/ad_id"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tbListImage" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvSelectImage"
         android:layout_width="match_parent"
@@ -27,7 +37,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tbListImage" />
+        app:layout_constraintTop_toBottomOf="@+id/adView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

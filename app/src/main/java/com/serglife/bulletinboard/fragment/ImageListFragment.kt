@@ -3,7 +3,6 @@ package com.serglife.bulletinboard.fragment
 import android.app.Activity
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -11,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.get
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.databinding.ListImageFragmentBinding
@@ -30,9 +28,10 @@ import kotlinx.coroutines.launch
 class ImageListFragment(
     val onFragmentCloseInterface: FragmentCloseInterface,
     val list: List<String>?
-) : Fragment(), AdapterCallback {
+) : BaseAdsFragment(), AdapterCallback {
 
     private lateinit var binding: ListImageFragmentBinding
+
     val adapter = SelectImageRVAdapter()
     private val dragCallback = ItemTouchMoveCallback(adapter)
     val touchHelper = ItemTouchHelper(dragCallback)
@@ -44,7 +43,10 @@ class ImageListFragment(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return ListImageFragmentBinding.inflate(layoutInflater).also { binding = it }.root
+        return ListImageFragmentBinding.inflate(layoutInflater).also {
+            binding = it
+            adView = binding.adView
+        }.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -56,20 +58,19 @@ class ImageListFragment(
         if (list != null) resizeSelectedImages(list, true)
     }
 
-    private fun init(){
+    private fun init() {
         adapter.adapterCallback = this
         binding.rvSelectImage.adapter = adapter
     }
-
 
 
     override fun onItemDelete() {
         addImageItem?.isVisible = true
     }
 
-    fun updateAdapterFromEdit(bitmapList: List<Bitmap>){
+    fun updateAdapterFromEdit(bitmapList: List<Bitmap>) {
         adapter.updateAdapter(bitmapList, true)
-        if(adapter.list.size >= ImagePiker.MAX_IMAGE_COUNT) addImageItem?.isVisible = false
+        if (adapter.list.size >= ImagePiker.MAX_IMAGE_COUNT) addImageItem?.isVisible = false
     }
 
     private fun setUpToolBar() {
@@ -78,7 +79,7 @@ class ImageListFragment(
         addImageItem = binding.tbListImage.menu.findItem(R.id.id_add_image)
 
         binding.tbListImage.setNavigationOnClickListener {
-            activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
+            showInterAd()
         }
 
         deleteImageItem.setOnMenuItemClickListener {
@@ -116,13 +117,13 @@ class ImageListFragment(
 
     }
 
-    private fun resizeSelectedImages(newList: List<String>, needClear: Boolean){
+    private fun resizeSelectedImages(newList: List<String>, needClear: Boolean) {
         job = CoroutineScope(Dispatchers.Main).launch {
             val dialog = ProgressDialog.createProgressDialog(activity as Activity)
             val bitmapList = ImageManager.imageResize(newList)
             dialog.dismiss()
             adapter.updateAdapter(bitmapList, needClear)
-            if(adapter.list.size >= ImagePiker.MAX_IMAGE_COUNT) addImageItem?.isVisible = false
+            if (adapter.list.size >= ImagePiker.MAX_IMAGE_COUNT) addImageItem?.isVisible = false
         }
     }
 
@@ -130,6 +131,11 @@ class ImageListFragment(
         super.onDetach()
         onFragmentCloseInterface.onClose(adapter.list)
         job?.cancel()
+    }
+
+    override fun onClose() {
+        super.onClose()
+        activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
     }
 
 
