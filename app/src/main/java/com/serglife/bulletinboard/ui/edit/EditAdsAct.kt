@@ -11,6 +11,7 @@ import android.widget.Toast
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
 import com.serglife.bulletinboard.R
+import com.serglife.bulletinboard.database.DbManager
 import com.serglife.bulletinboard.databinding.ActivityEditAdsBinding
 import com.serglife.bulletinboard.fragment.common.FragmentCloseInterface
 import com.serglife.bulletinboard.fragment.ImageListFragment
@@ -120,6 +121,12 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
             openChooseImageFragment(null)
             chooseImageFragment?.updateAdapterFromEdit(imageAdapter.list)
         }
+    }
+
+    fun onClickPublish(view: View){
+        val dbManager = DbManager()
+        dbManager.publishAd()
+
     }
 
     // Realize interface
