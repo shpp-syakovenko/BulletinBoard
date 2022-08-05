@@ -42,5 +42,21 @@
     <!-- Edit activity -->
     <string name="selected_country">*Выберите страну</string>
     <string name="selected_city">*Выберете город</string>
+    <string name="selected_images">Selected images</string>
+    <string name="country">Страна</string>
+    <string name="city">Город</string>
+    <string name="index">Индекс</string>
+    <string name="index_hint">*Индекс</string>
+    <string name="tel">Телефон</string>
+    <string name="tel_number">*Номер телефона</string>
+    <string name="with_send">С отправкой?</string>
+    <string name="send">Отправка</string>
+    <string name="category">Категория</string>
+    <string name="select_category">*Выберите категорию</string>
+    <string name="price">Цена</string>
+    <string name="price_hint">*Выберите цену</string>
+    <string name="description">Описание</string>
+    <string name="description_hint">*Введите описание</string>
+    <string name="publish">Опубликовать</string>
 
 </resources>

@@ -108,6 +108,11 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         }
     }
 
+    fun onClickSelectedCat(view: View) {
+            val listCategory = resources.getStringArray(R.array.category).toList()
+            dialog.showSpinnerDialog(this, listCategory, binding.tvCat)
+    }
+
     fun onClickGetImages(view: View) {
         if (imageAdapter.list.size == 0) {
             ImagePiker.getImages(this, ImagePiker.MAX_IMAGE_COUNT, ImagePiker.REQUEST_CODE_GET_IMAGES)
