@@ -11,6 +11,7 @@ import android.widget.Toast
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
 import com.serglife.bulletinboard.R
+import com.serglife.bulletinboard.data.Ad
 import com.serglife.bulletinboard.database.DbManager
 import com.serglife.bulletinboard.databinding.ActivityEditAdsBinding
 import com.serglife.bulletinboard.fragment.common.FragmentCloseInterface
@@ -32,6 +33,7 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
     lateinit var binding: ActivityEditAdsBinding
     private lateinit var dialog: DialogSpinnerHelper
     lateinit var imageAdapter: ImageAdapter
+    private val dbManager = DbManager()
     var job: Job? = null
     var editImagePos = 0
 
@@ -124,9 +126,27 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
     }
 
     fun onClickPublish(view: View){
-        val dbManager = DbManager()
-        dbManager.publishAd()
 
+        dbManager.publishAd(fillAd())
+
+    }
+
+    fun fillAd(): Ad{
+        val ad: Ad
+        binding.apply {
+            ad = Ad(
+                country = tvCountry.text.toString(),
+                city = tvCity.text.toString(),
+                tel = edTel.text.toString(),
+                index = edIndex.text.toString(),
+                withSend = checkBoxWithSend.isChecked.toString(),
+                category = tvCat.text.toString(),
+                price = edPrice.text.toString(),
+                description = edDescription.text.toString(),
+                key = dbManager.db.push().key
+            )
+        }
+        return ad
     }
 
     // Realize interface
