@@ -15,6 +15,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.serglife.bulletinboard.database.DbManager
 import com.serglife.bulletinboard.databinding.ActivityMainBinding
 import com.serglife.bulletinboard.ui.dialogs.account.DialogConst.SING_IN_STATE
 import com.serglife.bulletinboard.ui.dialogs.account.DialogConst.SING_UP_STATE
@@ -27,11 +28,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var binding: ActivityMainBinding
     private val dialogHelper = DialogHelper(this)
     val mAuth = FirebaseAuth.getInstance()
+    val dbManager = DbManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(ActivityMainBinding.inflate(layoutInflater).also { binding = it }.root)
         init()
+        dbManager.readDataFromDb()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
