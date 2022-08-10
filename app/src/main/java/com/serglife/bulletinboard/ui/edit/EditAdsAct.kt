@@ -33,7 +33,7 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
     lateinit var binding: ActivityEditAdsBinding
     private lateinit var dialog: DialogSpinnerHelper
     lateinit var imageAdapter: ImageAdapter
-    private val dbManager = DbManager()
+    private val dbManager = DbManager(null)
     var job: Job? = null
     var editImagePos = 0
 
@@ -141,6 +141,7 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
                 index = edIndex.text.toString(),
                 withSend = checkBoxWithSend.isChecked.toString(),
                 category = tvCat.text.toString(),
+                title = tvTitleCard.text.toString(),
                 price = edPrice.text.toString(),
                 description = edDescription.text.toString(),
                 key = dbManager.db.push().key

@@ -12,4 +12,5 @@
     <color name="green_main">#31A113</color>
     <color name="grey">#DDDDDD</color>
     <color name="grey_dark">#CFCFCF</color>
+    <color name="yellow">#FFC107</color>
 </resources>

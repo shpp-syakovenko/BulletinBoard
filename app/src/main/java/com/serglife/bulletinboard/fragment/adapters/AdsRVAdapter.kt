@@ -38,6 +38,7 @@ class AdsRVAdapter : RecyclerView.Adapter<AdsRVAdapter.AdViewHolder>() {
         fun bind(ad: Ad) {
             binding.apply {
                 tvDescriptionCV.text = ad.description
+                tvTitleCV.text = ad.title
                 tvPriceCV.text = ad.price
             }
 

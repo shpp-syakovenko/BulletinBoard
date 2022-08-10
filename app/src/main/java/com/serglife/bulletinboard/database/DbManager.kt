@@ -9,7 +9,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.serglife.bulletinboard.data.Ad
 
-class DbManager {
+class DbManager(val readDataCallback: ReadDataCallback?) {
     val db = Firebase.database.getReference("main")
     val auth = Firebase.auth
 
@@ -29,6 +29,7 @@ class DbManager {
                         .getValue(Ad::class.java)
                     if(ad != null) listAd.add(ad)
                 }
+                readDataCallback?.redData(listAd)
             }
 
             override fun onCancelled(error: DatabaseError) {
