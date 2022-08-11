@@ -60,7 +60,7 @@ class SelectImageRVAdapter : RecyclerView.Adapter<SelectImageRVAdapter.ImageHold
             ImageManager.chooseScaleType(binding.imageContentItem, bitmap)
             binding.imageContentItem.setImageBitmap(bitmap)
             binding.imEditButton.setOnClickListener{
-                ImagePiker.getImages(context as EditAdsAct, 1, ImagePiker.REQUEST_CODE_GET_SINGLE_IMAGE)
+                ImagePiker.launcher(context as EditAdsAct, context.launcherSingleSelectImage, 1)
                 context.editImagePos = adapterPosition
             }
             binding.imDeleteButton.setOnClickListener {

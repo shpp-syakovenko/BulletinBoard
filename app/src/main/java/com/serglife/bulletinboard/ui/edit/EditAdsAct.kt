@@ -5,10 +5,9 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
-import com.fxn.pix.Pix
+import androidx.activity.result.ActivityResultLauncher
 import com.fxn.utility.PermUtil
 import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.data.Ad
@@ -19,13 +18,8 @@ import com.serglife.bulletinboard.fragment.ImageListFragment
 import com.serglife.bulletinboard.fragment.adapters.ImageAdapter
 import com.serglife.bulletinboard.ui.dialogs.country.DialogSpinnerHelper
 import com.serglife.bulletinboard.utils.CityHelper
-import com.serglife.bulletinboard.utils.ImageManager
 import com.serglife.bulletinboard.utils.ImagePiker
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import java.util.ArrayList
 
 class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
 
@@ -36,6 +30,8 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
     private val dbManager = DbManager(null)
     var job: Job? = null
     var editImagePos = 0
+    var launcherMultiSelectImage: ActivityResultLauncher<Intent>? = null
+    var launcherSingleSelectImage: ActivityResultLauncher<Intent>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,12 +48,10 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         dialog = DialogSpinnerHelper()
         imageAdapter = ImageAdapter()
         binding.vpImages.adapter = imageAdapter
+        launcherMultiSelectImage = ImagePiker.getLauncherForMultiSelectImages(this)
+        launcherSingleSelectImage = ImagePiker.getLauncherForSingleImage(this)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        ImagePiker.showSelectedImages(resultCode, requestCode, data, this)
-    }
 
     fun openChooseImageFragment(valueReturn: List<String>?) {
         chooseImageFragment = ImageListFragment(this, valueReturn)
@@ -77,7 +71,7 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         when (requestCode) {
             PermUtil.REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    ImagePiker.getImages(this, 3, ImagePiker.REQUEST_CODE_GET_IMAGES)
+                    ImagePiker.launcher(this, launcherMultiSelectImage)
                 } else {
                     Toast.makeText(
                         this,
@@ -118,7 +112,7 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
 
     fun onClickGetImages(view: View) {
         if (imageAdapter.list.size == 0) {
-            ImagePiker.getImages(this, ImagePiker.MAX_IMAGE_COUNT, ImagePiker.REQUEST_CODE_GET_IMAGES)
+            ImagePiker.launcher(this, launcherMultiSelectImage)
         } else {
             openChooseImageFragment(null)
             chooseImageFragment?.updateAdapterFromEdit(imageAdapter.list)

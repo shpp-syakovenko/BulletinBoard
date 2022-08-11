@@ -8,7 +8,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.get
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.serglife.bulletinboard.R
@@ -16,6 +15,7 @@ import com.serglife.bulletinboard.databinding.ListImageFragmentBinding
 import com.serglife.bulletinboard.fragment.adapters.SelectImageRVAdapter
 import com.serglife.bulletinboard.fragment.common.FragmentCloseInterface
 import com.serglife.bulletinboard.ui.dialogs.dialog.ProgressDialog
+import com.serglife.bulletinboard.ui.edit.EditAdsAct
 import com.serglife.bulletinboard.utils.AdapterCallback
 import com.serglife.bulletinboard.utils.ImageManager
 import com.serglife.bulletinboard.utils.ImagePiker
@@ -90,10 +90,10 @@ class ImageListFragment(
 
         addImageItem?.setOnMenuItemClickListener {
             val imageCount = ImagePiker.MAX_IMAGE_COUNT - adapter.list.size
-            ImagePiker.getImages(
-                activity as AppCompatActivity,
-                imageCount,
-                ImagePiker.REQUEST_CODE_GET_IMAGES
+            ImagePiker.launcher(
+                activity as EditAdsAct,
+                (activity as EditAdsAct).launcherMultiSelectImage,
+                imageCount
             )
             true
         }
