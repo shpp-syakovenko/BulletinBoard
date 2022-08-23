@@ -38,5 +38,6 @@ class ImageAdapter : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
         fun bind(bitmap: Bitmap) {
             binding.imageItem.setImageBitmap(bitmap)
         }
+
     }
 }

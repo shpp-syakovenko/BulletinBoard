@@ -1,4 +1,4 @@
-package com.serglife.bulletinboard.data
+package com.serglife.bulletinboard.model
 
 data class Ad(
     val country: String? = null,
@@ -10,5 +10,6 @@ data class Ad(
     val title: String? = null,
     val price: String? = null,
     val description: String? = null,
-    val key: String? = null
+    val key: String? = null,
+    val uid: String? = null
 )

@@ -8,16 +8,15 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.serglife.bulletinboard.data.Ad
-import com.serglife.bulletinboard.database.DbManager
-import com.serglife.bulletinboard.database.ReadDataCallback
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.serglife.bulletinboard.databinding.ActivityMainBinding
 import com.serglife.bulletinboard.fragment.adapters.AdsRVAdapter
 import com.serglife.bulletinboard.ui.dialogs.account.DialogConst.SING_IN_STATE
@@ -25,21 +24,23 @@ import com.serglife.bulletinboard.ui.dialogs.account.DialogConst.SING_UP_STATE
 import com.serglife.bulletinboard.ui.dialogs.account.DialogHelper
 import com.serglife.bulletinboard.ui.dialogs.account.GoogleConst
 import com.serglife.bulletinboard.ui.edit.EditAdsAct
+import com.serglife.bulletinboard.viewmodel.FirebaseViewModel
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ReadDataCallback {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
     private lateinit var tvAccount: TextView
     private lateinit var binding: ActivityMainBinding
     private val dialogHelper = DialogHelper(this)
-    val mAuth = FirebaseAuth.getInstance()
-    private val dbManager = DbManager(this)
-    private val adapter = AdsRVAdapter()
+    val mAuth = Firebase.auth
+    private val adapter = AdsRVAdapter(mAuth)
+    private val viewModel: FirebaseViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(ActivityMainBinding.inflate(layoutInflater).also { binding = it }.root)
         init()
+        initViewModel()
         initRecyclerView()
-        dbManager.readDataFromDb()
+        viewModel.loadAllAd()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -78,6 +79,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onStart() {
         super.onStart()
         uiUpdate(mAuth.currentUser)
+    }
+
+    private fun initViewModel(){
+        viewModel.liveAdsData.observe(this) { list ->
+            adapter.updateAdapter(list)
+        }
     }
 
     private fun init() {
@@ -140,9 +147,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }else{
             user.email
         }
-    }
-
-    override fun redData(list: List<Ad>) {
-        adapter.updateAdapter(list)
     }
 }

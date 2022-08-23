@@ -10,8 +10,8 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import com.fxn.utility.PermUtil
 import com.serglife.bulletinboard.R
-import com.serglife.bulletinboard.data.Ad
-import com.serglife.bulletinboard.database.DbManager
+import com.serglife.bulletinboard.model.Ad
+import com.serglife.bulletinboard.model.DbManager
 import com.serglife.bulletinboard.databinding.ActivityEditAdsBinding
 import com.serglife.bulletinboard.fragment.common.FragmentCloseInterface
 import com.serglife.bulletinboard.fragment.ImageListFragment
@@ -27,7 +27,7 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
     lateinit var binding: ActivityEditAdsBinding
     private lateinit var dialog: DialogSpinnerHelper
     lateinit var imageAdapter: ImageAdapter
-    private val dbManager = DbManager(null)
+    private val dbManager = DbManager()
     var job: Job? = null
     var editImagePos = 0
     var launcherMultiSelectImage: ActivityResultLauncher<Intent>? = null
@@ -135,10 +135,11 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
                 index = edIndex.text.toString(),
                 withSend = checkBoxWithSend.isChecked.toString(),
                 category = tvCat.text.toString(),
-                title = tvTitleCard.text.toString(),
+                title = edTitleCard.text.toString(),
                 price = edPrice.text.toString(),
                 description = edDescription.text.toString(),
-                key = dbManager.db.push().key
+                key = dbManager.db.push().key,
+                uid = dbManager.auth.uid
             )
         }
         return ad

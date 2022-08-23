@@ -1,15 +1,13 @@
-package com.serglife.bulletinboard.database
+package com.serglife.bulletinboard.model
 
-import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.serglife.bulletinboard.data.Ad
 
-class DbManager(val readDataCallback: ReadDataCallback?) {
+class DbManager {
     val db = Firebase.database.getReference("main")
     val auth = Firebase.auth
 
@@ -19,7 +17,7 @@ class DbManager(val readDataCallback: ReadDataCallback?) {
         }
     }
 
-    fun readDataFromDb() {
+    fun readDataFromDb(readDataCallback: ReadDataCallback?) {
         db.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val listAd = mutableListOf<Ad>()
@@ -36,5 +34,8 @@ class DbManager(val readDataCallback: ReadDataCallback?) {
             }
 
         })
+    }
+    interface ReadDataCallback {
+        fun redData(list: List<Ad>)
     }
 }
