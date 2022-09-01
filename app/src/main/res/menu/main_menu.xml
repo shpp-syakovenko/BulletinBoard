@@ -7,6 +7,5 @@
         android:icon="@drawable/ic_new_ads"
         android:title="@string/new_ad"
         app:showAsAction="ifRoom"
-
         />
 </menu>

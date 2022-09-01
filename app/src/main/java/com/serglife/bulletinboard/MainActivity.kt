@@ -26,7 +26,7 @@ import com.serglife.bulletinboard.ui.dialogs.account.GoogleConst
 import com.serglife.bulletinboard.ui.edit.EditAdsAct
 import com.serglife.bulletinboard.viewmodel.FirebaseViewModel
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var tvAccount: TextView
     private lateinit var binding: ActivityMainBinding
     private val dialogHelper = DialogHelper(this)
@@ -41,34 +41,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         initViewModel()
         initRecyclerView()
         viewModel.loadAllAd()
+        bottomMenuOnClick()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.id_new_ads -> {
-                val intent = Intent(this, EditAdsAct::class.java)
-                startActivity(intent)
-            }
-        }
-        return super.onOptionsItemSelected(item)
+    override fun onResume() {
+        super.onResume()
+        binding.mainContent.bNavView.selectedItemId = R.id.id_home
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(requestCode == GoogleConst.GOOGLE_SING_IN_REQUEST_CODE){
-           // Log.d("MyLog","on Activity Result!!!!!!!!!!!!")
+        if (requestCode == GoogleConst.GOOGLE_SING_IN_REQUEST_CODE) {
+            // Log.d("MyLog","on Activity Result!!!!!!!!!!!!")
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
 
             try {
                 val account = task.getResult(ApiException::class.java)
-                if(account != null){
+                if (account != null) {
                     dialogHelper.accHelper.singInFireBaseWithGoogle(account.idToken!!)
                 }
-            }catch (e: ApiException){
+            } catch (e: ApiException) {
                 Log.d("MyLog", "Api exception: ${e.message}")
             }
         }
@@ -81,7 +72,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         uiUpdate(mAuth.currentUser)
     }
 
-    private fun initViewModel(){
+    private fun initViewModel() {
         viewModel.liveAdsData.observe(this) { list ->
             adapter.updateAdapter(list)
         }
@@ -102,28 +93,51 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         tvAccount = binding.navView.getHeaderView(0).findViewById(R.id.tvAccountEmail)
     }
 
-    private fun initRecyclerView(){
+    private fun initRecyclerView() {
         binding.mainContent.rcView.adapter = adapter
 
+    }
+
+    fun bottomMenuOnClick() = with(binding) {
+        mainContent.bNavView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.id_new_ad -> {
+                    val intent = Intent(this@MainActivity, EditAdsAct::class.java)
+                    startActivity(intent)
+                }
+                R.id.id_my_ads -> {
+                    Toast.makeText(this@MainActivity, "My ads", Toast.LENGTH_SHORT).show()
+                }
+                R.id.id_favs -> {
+                    Toast.makeText(this@MainActivity, "My fav", Toast.LENGTH_SHORT).show()
+                }
+                R.id.id_home -> {
+                    Toast.makeText(this@MainActivity, "Home", Toast.LENGTH_SHORT).show()
+                }
+
+            }
+
+            true
+        }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
         when (item.itemId) {
             R.id.id_my_ads -> {
-                Toast.makeText(this,"Press in my_ads", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Press in my_ads", Toast.LENGTH_LONG).show()
             }
             R.id.id_car -> {
-                Toast.makeText(this,"Press in id_car", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Press in id_car", Toast.LENGTH_LONG).show()
             }
             R.id.id_pc -> {
-                Toast.makeText(this,"Press in id_pc", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Press in id_pc", Toast.LENGTH_LONG).show()
             }
             R.id.id_smartphone -> {
-                Toast.makeText(this,"Press in id_smartphone", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Press in id_smartphone", Toast.LENGTH_LONG).show()
             }
             R.id.id_appliances -> {
-                Toast.makeText(this,"Press in id_appliances", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Press in id_appliances", Toast.LENGTH_LONG).show()
             }
             R.id.id_sing_up -> {
                 dialogHelper.createDialog(SING_UP_STATE)
@@ -141,10 +155,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    fun uiUpdate(user: FirebaseUser?){
-        tvAccount.text = if (user == null){
+    fun uiUpdate(user: FirebaseUser?) {
+        tvAccount.text = if (user == null) {
             resources.getString(R.string.not_reg)
-        }else{
+        } else {
             user.email
         }
     }
