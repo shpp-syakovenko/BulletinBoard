@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
-    fun bottomMenuOnClick() = with(binding) {
+    private fun bottomMenuOnClick() = with(binding) {
         mainContent.bNavView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.id_new_ad -> {
@@ -106,13 +106,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     startActivity(intent)
                 }
                 R.id.id_my_ads -> {
-                    Toast.makeText(this@MainActivity, "My ads", Toast.LENGTH_SHORT).show()
+                    viewModel.loadMyAd()
+                    mainContent.toolbar.title = getString(R.string.ad_my_ads)
                 }
                 R.id.id_favs -> {
                     Toast.makeText(this@MainActivity, "My fav", Toast.LENGTH_SHORT).show()
                 }
                 R.id.id_home -> {
-                    Toast.makeText(this@MainActivity, "Home", Toast.LENGTH_SHORT).show()
+                    viewModel.loadAllAd()
+                    mainContent.toolbar.title = getString(R.string.def)
                 }
 
             }
