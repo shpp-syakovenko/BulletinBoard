@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import com.fxn.utility.PermUtil
+import com.serglife.bulletinboard.MainActivity
 import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.model.Ad
 import com.serglife.bulletinboard.model.DbManager
@@ -29,14 +30,17 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
     lateinit var imageAdapter: ImageAdapter
     private val dbManager = DbManager()
     var job: Job? = null
-    var editImagePos = 0
     var launcherMultiSelectImage: ActivityResultLauncher<Intent>? = null
     var launcherSingleSelectImage: ActivityResultLauncher<Intent>? = null
+    var editImagePos = 0
+    private var isEditState = false
+    private var ad: Ad? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(ActivityEditAdsBinding.inflate(layoutInflater).also { binding = it }.root)
         init()
+        checkEditState()
     }
 
     override fun onStop() {
@@ -52,6 +56,29 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         launcherSingleSelectImage = ImagePiker.getLauncherForSingleImage(this)
     }
 
+    private fun checkEditState(){
+        isEditState = isEditState()
+        if(isEditState){
+            ad = intent.getSerializableExtra(MainActivity.ADS_DATA) as Ad
+            if(ad != null) fillViews(ad!!)
+        }
+    }
+
+    private fun isEditState():Boolean{
+        return intent.getBooleanExtra(MainActivity.EDIT_STATE, false)
+    }
+
+    private fun fillViews(ad: Ad) = with(binding){
+        tvCountry.text = ad.country
+        tvCity.text = ad.city
+        edTel.setText(ad.tel)
+        edIndex.setText(ad.index)
+        checkBoxWithSend.isChecked = ad.withSend.toBoolean()
+        tvCat.text = ad.category
+        edTitleCard.setText(ad.title)
+        edPrice.setText(ad.price)
+        edDescription.setText(ad.description)
+    }
 
     fun openChooseImageFragment(valueReturn: List<String>?) {
         chooseImageFragment = ImageListFragment(this, valueReturn)
@@ -120,9 +147,20 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
     }
 
     fun onClickPublish(view: View){
+        val adTemp = fillAd()
+        if(isEditState){
+            dbManager.publishAd(adTemp.copy(key = ad?.key), onPublishFinish())
+        }
+        else {
+            dbManager.publishAd(adTemp, onPublishFinish())
+        }
 
-        dbManager.publishAd(fillAd())
+    }
 
+    fun onPublishFinish() = object : DbManager.FinishWorkListener{
+        override fun onFinish() {
+            finish()
+        }
     }
 
     fun fillAd(): Ad{

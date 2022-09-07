@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var binding: ActivityMainBinding
     private val dialogHelper = DialogHelper(this)
     val mAuth = Firebase.auth
-    private val adapter = AdsRVAdapter(mAuth)
+    private val adapter = AdsRVAdapter(this)
     private val viewModel: FirebaseViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -163,5 +163,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             user.email
         }
+    }
+
+    companion object{
+        const val EDIT_STATE = "edit_state"
+        const val ADS_DATA = "ads_data"
     }
 }
