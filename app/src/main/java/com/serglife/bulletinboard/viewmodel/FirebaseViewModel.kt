@@ -7,11 +7,11 @@ import com.serglife.bulletinboard.model.DbManager
 
 class FirebaseViewModel : ViewModel() {
     private val dbManager = DbManager()
-    val liveAdsData = MutableLiveData<List<Ad>>()
+    val liveAdsData = MutableLiveData<MutableList<Ad>>()
 
     fun loadAllAd(){
         dbManager.getAllAds(object : DbManager.ReadDataCallback{
-            override fun redData(list: List<Ad>) {
+            override fun redData(list: MutableList<Ad>) {
                 liveAdsData.value = list
             }
         })
@@ -19,8 +19,19 @@ class FirebaseViewModel : ViewModel() {
 
     fun loadMyAd(){
         dbManager.getMyAds(object : DbManager.ReadDataCallback{
-            override fun redData(list: List<Ad>) {
+            override fun redData(list: MutableList<Ad>) {
                 liveAdsData.value = list
+            }
+        })
+    }
+
+    fun deleteItem(ad: Ad){
+        dbManager.deleteAd(ad, object : DbManager.FinishWorkListener{
+            override fun onFinish() {
+                //loadAllAd()
+                val updateList = liveAdsData.value
+                updateList?.remove(ad)
+                liveAdsData.postValue(updateList)
             }
         })
     }

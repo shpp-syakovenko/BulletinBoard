@@ -19,6 +19,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.serglife.bulletinboard.databinding.ActivityMainBinding
 import com.serglife.bulletinboard.fragment.adapters.AdsRVAdapter
+import com.serglife.bulletinboard.model.Ad
 import com.serglife.bulletinboard.ui.dialogs.account.DialogConst.SING_IN_STATE
 import com.serglife.bulletinboard.ui.dialogs.account.DialogConst.SING_UP_STATE
 import com.serglife.bulletinboard.ui.dialogs.account.DialogHelper
@@ -26,7 +27,7 @@ import com.serglife.bulletinboard.ui.dialogs.account.GoogleConst
 import com.serglife.bulletinboard.ui.edit.EditAdsAct
 import com.serglife.bulletinboard.viewmodel.FirebaseViewModel
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, AdsRVAdapter.DeleteItemListener {
     private lateinit var tvAccount: TextView
     private lateinit var binding: ActivityMainBinding
     private val dialogHelper = DialogHelper(this)
@@ -168,5 +169,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     companion object{
         const val EDIT_STATE = "edit_state"
         const val ADS_DATA = "ads_data"
+    }
+
+    override fun onDeleteItem(ad: Ad) {
+        viewModel.deleteItem(ad)
     }
 }

@@ -4,8 +4,8 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.auth.FirebaseAuth
 import com.serglife.bulletinboard.MainActivity
 import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.model.Ad
@@ -30,10 +30,10 @@ class AdsRVAdapter(val activity: MainActivity) : RecyclerView.Adapter<AdsRVAdapt
     }
 
     fun updateAdapter(newList: List<Ad>){
+        val diffResult = DiffUtil.calculateDiff(DiffUtilHelper(list, newList))
+        diffResult.dispatchUpdatesTo(this)
         list.clear()
         list.addAll(newList)
-        notifyDataSetChanged()
-
     }
 
     class AdViewHolder(val item: View, val activity: MainActivity) : RecyclerView.ViewHolder(item) {
@@ -45,6 +45,9 @@ class AdsRVAdapter(val activity: MainActivity) : RecyclerView.Adapter<AdsRVAdapt
             tvPriceCV.text = ad.price
             showEditPanel(isOwner(ad))
             ibEditAd.setOnClickListener(onClickEdit(ad))
+            ibDeleteAd.setOnClickListener{
+                activity.onDeleteItem(ad)
+            }
         }
 
         private fun onClickEdit(ad: Ad): View.OnClickListener{
@@ -71,5 +74,9 @@ class AdsRVAdapter(val activity: MainActivity) : RecyclerView.Adapter<AdsRVAdapt
             }
         }
 
+    }
+
+    interface DeleteItemListener{
+        fun onDeleteItem(ad: Ad)
     }
 }

@@ -31,6 +31,13 @@ class DbManager {
         readDataFromDb(query, readDataCallback)
     }
 
+    fun deleteAd(ad: Ad, listener: FinishWorkListener){
+        if(ad.key == null || ad.uid == null) return
+        db.child(ad.key).child(ad.uid).removeValue().addOnCompleteListener {
+            if(it.isSuccessful) listener.onFinish()
+        }
+    }
+
 
 
     private fun readDataFromDb(query: Query, readDataCallback: ReadDataCallback?) {
@@ -52,7 +59,7 @@ class DbManager {
         })
     }
     interface ReadDataCallback {
-        fun redData(list: List<Ad>)
+        fun redData(list: MutableList<Ad>)
     }
     interface FinishWorkListener{
         fun onFinish()
