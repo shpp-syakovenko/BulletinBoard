@@ -4,7 +4,6 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
@@ -27,7 +26,7 @@ import com.serglife.bulletinboard.ui.dialogs.account.GoogleConst
 import com.serglife.bulletinboard.ui.edit.EditAdsAct
 import com.serglife.bulletinboard.viewmodel.FirebaseViewModel
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, AdsRVAdapter.DeleteItemListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, AdsRVAdapter.Listener {
     private lateinit var tvAccount: TextView
     private lateinit var binding: ActivityMainBinding
     private val dialogHelper = DialogHelper(this)
@@ -173,5 +172,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onDeleteItem(ad: Ad) {
         viewModel.deleteItem(ad)
+    }
+
+    override fun onAdViewed(ad: Ad) {
+        viewModel.adViewed(ad)
     }
 }

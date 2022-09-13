@@ -113,7 +113,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 android:background="@color/grey"
-                android:orientation="horizontal"></LinearLayout>
+                android:orientation="horizontal"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -140,14 +140,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:fontFamily="sans-serif-condensed"
-                        android:text="1200"
+                        android:text="0"
                         android:textColor="@color/black" />
 
                     <ImageButton
                         android:id="@+id/ibFav"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
+                        android:layout_marginStart="10dp"
                         android:background="@android:color/transparent"
                         app:srcCompat="@drawable/ic_fav_normal" />
 
@@ -157,7 +157,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:fontFamily="sans-serif-condensed"
-                        android:text="300"
+                        android:text="0"
                         android:textColor="@color/black" />
                 </LinearLayout>
 

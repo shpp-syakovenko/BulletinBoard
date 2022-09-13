@@ -25,6 +25,10 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
+    fun adViewed(ad: Ad){
+        dbManager.addViewed(ad)
+    }
+
     fun deleteItem(ad: Ad){
         dbManager.deleteAd(ad, object : DbManager.FinishWorkListener{
             override fun onFinish() {
