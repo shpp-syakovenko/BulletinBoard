@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -75,6 +76,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun initViewModel() {
         viewModel.liveAdsData.observe(this) { list ->
             adapter.updateAdapter(list)
+            binding.mainContent.tvEmpty.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
         }
     }
 
@@ -110,7 +112,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     mainContent.toolbar.title = getString(R.string.ad_my_ads)
                 }
                 R.id.id_favs -> {
-                    Toast.makeText(this@MainActivity, "My fav", Toast.LENGTH_SHORT).show()
+                    viewModel.loadMyFavs()
+                    mainContent.toolbar.title = getString(R.string.ad_my_favs)
                 }
                 R.id.id_home -> {
                     viewModel.loadAllAd()
@@ -176,5 +179,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onAdViewed(ad: Ad) {
         viewModel.adViewed(ad)
+    }
+
+    override fun onFavClicked(ad: Ad) {
+        viewModel.onFavClick(ad)
     }
 }

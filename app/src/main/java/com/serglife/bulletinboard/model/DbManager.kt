@@ -6,6 +6,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 
 class DbManager {
@@ -35,8 +36,38 @@ class DbManager {
         }
     }
 
+    fun onFavClick(ad: Ad, listener: FinishWorkListener){
+        if(ad.isFav) removeToFavs(ad, listener)
+        else addToFavs(ad,listener)
+    }
+
+    private fun addToFavs(ad: Ad, listener: FinishWorkListener) {
+        ad.key?.let { key ->
+            auth.uid?.let { uid ->
+                db.child(key).child(FAVS_NODE).child(uid).setValue(uid).addOnCompleteListener {
+                    if(it.isSuccessful) listener.onFinish()
+                }
+            }
+        }
+    }
+
+    private fun removeToFavs(ad: Ad, listener: FinishWorkListener) {
+        ad.key?.let { key ->
+            auth.uid?.let { uid ->
+                db.child(key).child(FAVS_NODE).child(uid).removeValue().addOnCompleteListener {
+                    if(it.isSuccessful) listener.onFinish()
+                }
+            }
+        }
+    }
+
     fun getMyAds(readDataCallback: ReadDataCallback?){
         val query = db.orderByChild(auth.uid + "/ad/uid").equalTo(auth.uid)
+        readDataFromDb(query, readDataCallback)
+    }
+
+    fun getMyFavs(readDataCallback: ReadDataCallback?){
+        val query = db.orderByChild("/favs/${auth.uid}").equalTo(auth.uid)
         readDataFromDb(query, readDataCallback)
     }
 
@@ -65,11 +96,15 @@ class DbManager {
                         if(ad == null) ad = it.child(AD_NODE).getValue(Ad::class.java)
                     }
                     val infoItem = item.child(INFO_NODE).getValue(InfoItem::class.java)
+                    val favsCounter = item.child(FAVS_NODE).childrenCount.toString()
+                    val isFavs = auth.uid?.let { item.child(FAVS_NODE).child(it).getValue(String::class.java) }
 
                     ad?.apply {
+                        isFav = isFavs != null
                         viewsCounter = infoItem?.viewsCounter ?: "0"
                         emailsCounter = infoItem?.emailsCounter ?: "0"
                         callsCounter = infoItem?.callsCounter ?: "0"
+                        favCounter = favsCounter
                     }
                     if(ad != null) listAd.add(ad!!)
                 }
@@ -92,5 +127,6 @@ class DbManager {
         const val AD_NODE = "ad"
         const val INFO_NODE = "info"
         const val MAIN_NODE = "main"
+        const val FAVS_NODE = "favs"
     }
 }

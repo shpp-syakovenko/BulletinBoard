@@ -44,14 +44,24 @@ class AdsRVAdapter(val activity: MainActivity) : RecyclerView.Adapter<AdsRVAdapt
             tvTitleCV.text = ad.title
             tvPriceCV.text = ad.price
             tvViewCounter.text = ad.viewsCounter
+            tvFav.text = ad.favCounter
             showEditPanel(isOwner(ad))
+            if(ad.isFav){
+                ibFav.setImageResource(R.drawable.ic_fav_pressed)
+            }else{
+                ibFav.setImageResource(R.drawable.ic_fav_normal)
+            }
             ibEditAd.setOnClickListener(onClickEdit(ad))
             ibDeleteAd.setOnClickListener{
                 activity.onDeleteItem(ad)
             }
+            ibFav.setOnClickListener {
+                activity.onFavClicked(ad)
+            }
             itemView.setOnClickListener{
                 activity.onAdViewed(ad)
             }
+
         }
 
         private fun onClickEdit(ad: Ad): View.OnClickListener{
@@ -83,5 +93,6 @@ class AdsRVAdapter(val activity: MainActivity) : RecyclerView.Adapter<AdsRVAdapt
     interface Listener{
         fun onDeleteItem(ad: Ad)
         fun onAdViewed(ad: Ad)
+        fun onFavClicked(ad: Ad)
     }
 }
