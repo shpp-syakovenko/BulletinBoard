@@ -27,6 +27,7 @@
     <string name="email_hint">Email</string>
     <string name="email_reset_password">Reset email was send!</string>
     <string name="email_reset_password_error">Email не найден, введите верный email</string>
+    <string name="guest">Гость</string>
     <string name="password_hint">Password</string>
     <string name="sing_up_action">Зарегистрироватся</string>
     <string name="sing_in_action">Войти</string>

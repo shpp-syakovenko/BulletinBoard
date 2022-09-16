@@ -20,6 +20,7 @@ import com.google.firebase.ktx.Firebase
 import com.serglife.bulletinboard.databinding.ActivityMainBinding
 import com.serglife.bulletinboard.fragment.adapters.AdsRVAdapter
 import com.serglife.bulletinboard.model.Ad
+import com.serglife.bulletinboard.ui.dialogs.account.AccountHelper
 import com.serglife.bulletinboard.ui.dialogs.account.DialogConst.SING_IN_STATE
 import com.serglife.bulletinboard.ui.dialogs.account.DialogConst.SING_UP_STATE
 import com.serglife.bulletinboard.ui.dialogs.account.DialogHelper
@@ -151,6 +152,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 dialogHelper.createDialog(SING_IN_STATE)
             }
             R.id.id_sing_out -> {
+                if(mAuth.currentUser?.isAnonymous == true){
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    return true
+                }
                 uiUpdate(null)
                 mAuth.signOut()
                 dialogHelper.accHelper.singOutGoogle()
@@ -161,11 +166,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     fun uiUpdate(user: FirebaseUser?) {
-        tvAccount.text = if (user == null) {
-            resources.getString(R.string.not_reg)
-        } else {
-            user.email
-        }
+         if (user == null) {
+           dialogHelper.accHelper.singAnonymously(object : AccountHelper.Listener{
+               override fun onComplete() {
+                   tvAccount.text = resources.getString(R.string.guest)
+               }
+
+           })
+        } else if(user.isAnonymous) {
+             tvAccount.text = resources.getString(R.string.guest)
+        }else if(!user.isAnonymous){
+            tvAccount.text = user.email
+         }
     }
 
     companion object{
