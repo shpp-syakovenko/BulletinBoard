@@ -1,14 +1,11 @@
 package com.serglife.bulletinboard.ui.edit
 
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
-import com.fxn.utility.PermUtil
 import com.serglife.bulletinboard.MainActivity
 import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.model.Ad
@@ -30,8 +27,6 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
     lateinit var imageAdapter: ImageAdapter
     private val dbManager = DbManager()
     var job: Job? = null
-    var launcherMultiSelectImage: ActivityResultLauncher<Intent>? = null
-    var launcherSingleSelectImage: ActivityResultLauncher<Intent>? = null
     var editImagePos = 0
     private var isEditState = false
     private var ad: Ad? = null
@@ -52,8 +47,6 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         dialog = DialogSpinnerHelper()
         imageAdapter = ImageAdapter()
         binding.vpImages.adapter = imageAdapter
-        launcherMultiSelectImage = ImagePiker.getLauncherForMultiSelectImages(this)
-        launcherSingleSelectImage = ImagePiker.getLauncherForSingleImage(this)
     }
 
     private fun checkEditState(){
@@ -80,35 +73,16 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         edDescription.setText(ad.description)
     }
 
-    fun openChooseImageFragment(valueReturn: List<String>?) {
-        chooseImageFragment = ImageListFragment(this, valueReturn)
+    fun openChooseImageFragment(newList: List<Uri>?) {
+        chooseImageFragment = ImageListFragment(this)
+        if(newList != null) chooseImageFragment?.resizeSelectedImages(newList, true, this)
         binding.scrollViewMain.visibility = View.GONE
         supportFragmentManager.beginTransaction()
             .replace(R.id.place_holder, chooseImageFragment!!)
             .commit()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        when (requestCode) {
-            PermUtil.REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    ImagePiker.launcher(this, launcherMultiSelectImage)
-                } else {
-                    Toast.makeText(
-                        this,
-                        "Approve permissions to open Pix ImagePiker",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }
-    }
 
     //onClicks
     fun onClickSelectedCountry(view: View) {
@@ -118,7 +92,6 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
             binding.tvCity.text = getString(R.string.selected_city)
         }
     }
-
     fun onClickSelectedCities(view: View) {
 
         val selectedCountry = binding.tvCountry.text.toString()
@@ -139,7 +112,7 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
 
     fun onClickGetImages(view: View) {
         if (imageAdapter.list.size == 0) {
-            ImagePiker.launcher(this, launcherMultiSelectImage)
+            ImagePiker.getMultiImages(this)
         } else {
             openChooseImageFragment(null)
             chooseImageFragment?.updateAdapterFromEdit(imageAdapter.list)

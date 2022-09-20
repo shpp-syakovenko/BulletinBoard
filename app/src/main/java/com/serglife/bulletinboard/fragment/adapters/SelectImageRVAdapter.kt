@@ -2,7 +2,6 @@ package com.serglife.bulletinboard.fragment.adapters
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,7 +59,7 @@ class SelectImageRVAdapter : RecyclerView.Adapter<SelectImageRVAdapter.ImageHold
             ImageManager.chooseScaleType(binding.imageContentItem, bitmap)
             binding.imageContentItem.setImageBitmap(bitmap)
             binding.imEditButton.setOnClickListener{
-                ImagePiker.launcher(context as EditAdsAct, context.launcherSingleSelectImage, 1)
+                ImagePiker.getSingleImage(context as EditAdsAct)
                 context.editImagePos = adapterPosition
             }
             binding.imDeleteButton.setOnClickListener {
