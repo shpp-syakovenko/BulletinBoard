@@ -4,12 +4,14 @@ import android.app.Activity
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.core.view.get
+import androidx.core.view.size
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.databinding.ListImageFragmentBinding
@@ -104,6 +106,9 @@ class ImageListFragment(
 
     fun setSingleImage(uri: Uri, position: Int) {
 
+        val size = binding.rvSelectImage.size
+        Log.d("MyLog","Size: $size Position:$position")
+
         val pBar = binding.rvSelectImage[position].findViewById<ProgressBar>(R.id.pBar)
 
         job = CoroutineScope(Dispatchers.Main).launch {
@@ -126,15 +131,11 @@ class ImageListFragment(
         }
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        onFragmentCloseInterface.onClose(adapter.list)
-        job?.cancel()
-    }
-
     override fun onClose() {
         super.onClose()
         activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
+        onFragmentCloseInterface.onClose(adapter.list)
+        job?.cancel()
     }
 
 

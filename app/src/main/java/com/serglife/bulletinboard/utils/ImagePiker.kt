@@ -1,14 +1,7 @@
 package com.serglife.bulletinboard.utils
 
-import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.view.View
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.ui.edit.EditAdsAct
 import io.ak1.pix.helpers.PixEventCallback
@@ -45,14 +38,11 @@ object ImagePiker {
     }
 
     fun addImages(edAct: EditAdsAct, imageCounter: Int = MAX_IMAGE_COUNT) {
-        val fragment = edAct.chooseImageFragment
+
         edAct.addPixToActivity(R.id.place_holder, getOptions(imageCounter)) { result ->
             when (result.status) {
                 PixEventCallback.Status.SUCCESS -> {
-                    edAct.chooseImageFragment = fragment
-                    if (fragment != null) {
-                        openChooseImageFragment(edAct, fragment)
-                    }
+                    openChooseImageFragment(edAct)
                     edAct.chooseImageFragment?.updateAdapter(result.data as MutableList<Uri>, edAct)
 
                 }
@@ -63,15 +53,11 @@ object ImagePiker {
     }
 
     fun getSingleImage(edAct: EditAdsAct) {
-        val fragment = edAct.chooseImageFragment
+
         edAct.addPixToActivity(R.id.place_holder, getOptions(1)) { result ->
             when (result.status) {
                 PixEventCallback.Status.SUCCESS -> {
-                    edAct.chooseImageFragment = fragment
-
-                    if (fragment != null) {
-                        openChooseImageFragment(edAct, fragment)
-                    }
+                    openChooseImageFragment(edAct)
                     singleImage(edAct, result.data[0])
                 }
                 PixEventCallback.Status.BACK_PRESSED -> {
@@ -80,8 +66,8 @@ object ImagePiker {
         }
     }
 
-    private fun openChooseImageFragment(edAct: EditAdsAct, fragment: Fragment){
-        edAct.supportFragmentManager.beginTransaction().replace(R.id.place_holder, fragment).commit()
+    private fun openChooseImageFragment(edAct: EditAdsAct){
+        edAct.supportFragmentManager.beginTransaction().replace(R.id.place_holder, edAct.chooseImageFragment!!).commit()
     }
 
     private fun closePixFragment(edAct: EditAdsAct) {
