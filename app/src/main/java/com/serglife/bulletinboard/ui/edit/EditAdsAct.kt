@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import com.google.android.gms.tasks.OnCompleteListener
 import com.serglife.bulletinboard.MainActivity
 import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.model.Ad
@@ -18,6 +19,7 @@ import com.serglife.bulletinboard.ui.dialogs.country.DialogSpinnerHelper
 import com.serglife.bulletinboard.utils.CityHelper
 import com.serglife.bulletinboard.utils.ImagePiker
 import kotlinx.coroutines.Job
+import java.io.ByteArrayOutputStream
 
 class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
 
@@ -125,7 +127,7 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
             dbManager.publishAd(adTemp.copy(key = ad?.key), onPublishFinish())
         }
         else {
-            dbManager.publishAd(adTemp, onPublishFinish())
+            uploadImages(adTemp)
         }
 
     }
@@ -134,6 +136,30 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         override fun onFinish() {
             finish()
         }
+    }
+
+    private fun uploadImages(adTemp : Ad){
+        val byteArray = prepareImageByteArray(imageAdapter.list[0])
+        uploadImage(byteArray){
+            dbManager.publishAd(adTemp.copy(mainImage = it.result.toString()), onPublishFinish())
+        }
+
+    }
+    private fun prepareImageByteArray(bitmap: Bitmap): ByteArray{
+        val outStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 20, outStream)
+        return outStream.toByteArray()
+    }
+
+    private fun uploadImage(byteArray: ByteArray, listener: OnCompleteListener<Uri>){
+        val inStorageRef = dbManager.dbStorage
+            .child(dbManager.auth.uid!!)
+            .child("image_${System.currentTimeMillis()}")
+
+        val upTask = inStorageRef.putBytes(byteArray)
+        upTask.continueWithTask {
+            inStorageRef.downloadUrl
+        }.addOnCompleteListener(listener)
     }
 
     fun fillAd(): Ad{
@@ -149,6 +175,7 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
                 title = edTitleCard.text.toString(),
                 price = edPrice.text.toString(),
                 description = edDescription.text.toString(),
+                mainImage = "empty",
                 key = dbManager.db.push().key,
                 uid = dbManager.auth.uid
             )
