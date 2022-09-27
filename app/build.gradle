@@ -32,6 +32,7 @@ android {
     }
     buildFeatures{
         viewBinding true
+        dataBinding true
     }
 }
 
@@ -51,6 +52,8 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0-native-mt'
     implementation 'com.google.android.gms:play-services-ads:21.1.0'
     implementation  'io.ak1.pix:piximagepicker:1.6.3'
+    implementation  'dev.chrisbanes.insetter:insetter:0.6.1'
+    implementation  'dev.chrisbanes.insetter:insetter-dbx:0.6.1'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'

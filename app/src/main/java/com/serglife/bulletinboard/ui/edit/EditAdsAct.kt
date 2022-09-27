@@ -12,6 +12,7 @@ import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.model.Ad
 import com.serglife.bulletinboard.model.DbManager
 import com.serglife.bulletinboard.databinding.ActivityEditAdsBinding
+import com.serglife.bulletinboard.ext.makeTransparentStatusBar
 import com.serglife.bulletinboard.fragment.common.FragmentCloseInterface
 import com.serglife.bulletinboard.fragment.ImageListFragment
 import com.serglife.bulletinboard.fragment.adapters.ImageAdapter
@@ -30,12 +31,14 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
     private val dbManager = DbManager()
     var job: Job? = null
     var editImagePos = 0
+    private var imageIndex = 0
     private var isEditState = false
     private var ad: Ad? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(ActivityEditAdsBinding.inflate(layoutInflater).also { binding = it }.root)
+        makeTransparentStatusBar()
         init()
         checkEditState()
     }
@@ -122,12 +125,12 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
     }
 
     fun onClickPublish(view: View){
-        val adTemp = fillAd()
+        ad = fillAd()
         if(isEditState){
-            dbManager.publishAd(adTemp.copy(key = ad?.key), onPublishFinish())
+            ad?.copy(key = ad?.key)?.let { dbManager.publishAd(it, onPublishFinish()) }
         }
         else {
-            uploadImages(adTemp)
+            uploadImages()
         }
 
     }
@@ -138,13 +141,33 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         }
     }
 
-    private fun uploadImages(adTemp : Ad){
-        val byteArray = prepareImageByteArray(imageAdapter.list[0])
-        uploadImage(byteArray){
-            dbManager.publishAd(adTemp.copy(mainImage = it.result.toString()), onPublishFinish())
+    private fun uploadImages(){
+        if(imageAdapter.list.size == imageIndex){
+            dbManager.publishAd(ad!!, onPublishFinish())
+            return
         }
-
+        val byteArray = prepareImageByteArray(imageAdapter.list[imageIndex])
+        uploadImage(byteArray){
+            nextImage(it.result.toString())
+        }
     }
+
+    private fun nextImage(uri: String){
+        setImageUriToAd(uri)
+        imageIndex++
+        uploadImages()
+    }
+
+    private fun setImageUriToAd(uri: String){
+        when(imageIndex){
+            0 -> ad = ad?.copy(mainImage = uri)
+            1 -> ad = ad?.copy(image2 = uri)
+            2 -> ad = ad?.copy(image3 = uri)
+            3 -> ad = ad?.copy(image4 = uri)
+            4 -> ad = ad?.copy(image5 = uri)
+        }
+    }
+
     private fun prepareImageByteArray(bitmap: Bitmap): ByteArray{
         val outStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 20, outStream)
