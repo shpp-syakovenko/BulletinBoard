@@ -124,15 +124,14 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         }
     }
 
-    fun onClickPublish(view: View){
+    fun onClickPublish(view: View) {
+        val key = if (isEditState) ad?.key else null
         ad = fillAd()
-        if(isEditState){
-            ad?.copy(key = ad?.key)?.let { dbManager.publishAd(it, onPublishFinish()) }
-        }
-        else {
+        if (isEditState) {
+            ad?.copy(key = key)?.let { dbManager.publishAd(it, onPublishFinish()) }
+        } else {
             uploadImages()
         }
-
     }
 
     fun onPublishFinish() = object : DbManager.FinishWorkListener{

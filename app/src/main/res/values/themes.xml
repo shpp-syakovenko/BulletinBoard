@@ -22,11 +22,11 @@
     </style>
 
     <style name="SeregaAppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/purple_500</item>
+        <item name="android:statusBarColor">@color/green_main</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowBackground">@color/black</item>
-        <item name="android:navigationBarColor">@color/purple_700</item>
+        <item name="android:navigationBarColor">@color/green_main</item>
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryDark">@color/white</item>
         <item name="colorAccent">@color/white</item>
