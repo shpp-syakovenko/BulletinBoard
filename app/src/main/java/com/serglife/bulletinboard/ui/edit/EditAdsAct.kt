@@ -1,6 +1,7 @@
 package com.serglife.bulletinboard.ui.edit
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

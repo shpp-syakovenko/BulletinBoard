@@ -10,7 +10,9 @@ import com.serglife.bulletinboard.MainActivity
 import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.model.Ad
 import com.serglife.bulletinboard.databinding.AdListItemBinding
+import com.serglife.bulletinboard.ui.description.DescriptionActivity
 import com.serglife.bulletinboard.ui.edit.EditAdsAct
+import com.squareup.picasso.Picasso
 
 class AdsRVAdapter(val activity: MainActivity) : RecyclerView.Adapter<AdsRVAdapter.AdViewHolder>() {
 
@@ -45,23 +47,35 @@ class AdsRVAdapter(val activity: MainActivity) : RecyclerView.Adapter<AdsRVAdapt
             tvPriceCV.text = ad.price
             tvViewCounter.text = ad.viewsCounter
             tvFav.text = ad.favCounter
+            Picasso.get().load(ad.mainImage).into(imageView)
+            isFav(ad)
             showEditPanel(isOwner(ad))
-            if(ad.isFav){
-                ibFav.setImageResource(R.drawable.ic_fav_pressed)
-            }else{
-                ibFav.setImageResource(R.drawable.ic_fav_normal)
-            }
+            mainOnClick(ad)
+
+        }
+
+        private fun mainOnClick(ad: Ad) = with(binding) {
             ibEditAd.setOnClickListener(onClickEdit(ad))
-            ibDeleteAd.setOnClickListener{
+            ibDeleteAd.setOnClickListener {
                 activity.onDeleteItem(ad)
             }
             ibFav.setOnClickListener {
-                if(activity.mAuth.currentUser?.isAnonymous == false) activity.onFavClicked(ad)
+                if (activity.mAuth.currentUser?.isAnonymous == false) activity.onFavClicked(ad)
             }
-            itemView.setOnClickListener{
+            itemView.setOnClickListener {
                 activity.onAdViewed(ad)
+                val intent = Intent(binding.root.context, DescriptionActivity::class.java)
+                intent.putExtra(DescriptionActivity.AD, ad)
+                activity.startActivity(intent)
             }
+        }
 
+        private fun isFav(ad: Ad){
+            if(ad.isFav){
+                binding.ibFav.setImageResource(R.drawable.ic_fav_pressed)
+            }else{
+                binding.ibFav.setImageResource(R.drawable.ic_fav_normal)
+            }
         }
 
         private fun onClickEdit(ad: Ad): View.OnClickListener{

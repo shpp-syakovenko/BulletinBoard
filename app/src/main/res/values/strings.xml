@@ -64,7 +64,14 @@
     <string name="description_hint">*Введите описание</string>
     <string name="publish">Опубликовать</string>
 
-    <!-- Ad list item -->
+    <!-- Description Activity -->
     <string name="price_desc">Цена:</string>
+    <string name="tel_desc">Телефон:</string>
+    <string name="email_desc">Email:</string>
+    <string name="country_desc">Страна:</string>
+    <string name="city_desc">Город:</string>
+    <string name="index_desc">Индекс:</string>
+    <string name="with_send_desc">С отправкой:</string>
+
 
 </resources>
