@@ -31,7 +31,7 @@ class AdsRVAdapter(val activity: MainActivity) : RecyclerView.Adapter<AdsRVAdapt
         return list.size
     }
 
-    fun updateAdapter(newList: List<Ad>){
+    fun updateAdapter(newList: List<Ad>) {
         val diffResult = DiffUtil.calculateDiff(DiffUtilHelper(list, newList))
         diffResult.dispatchUpdatesTo(this)
         list.clear()
@@ -64,21 +64,22 @@ class AdsRVAdapter(val activity: MainActivity) : RecyclerView.Adapter<AdsRVAdapt
             }
             itemView.setOnClickListener {
                 activity.onAdViewed(ad)
-                val intent = Intent(binding.root.context, DescriptionActivity::class.java)
-                intent.putExtra(DescriptionActivity.AD, ad)
-                activity.startActivity(intent)
+                Intent(binding.root.context, DescriptionActivity::class.java)
+                    .apply { putExtra(DescriptionActivity.AD, ad) }
+                    .also { activity.startActivity(it) }
+
             }
         }
 
-        private fun isFav(ad: Ad){
-            if(ad.isFav){
+        private fun isFav(ad: Ad) {
+            if (ad.isFav) {
                 binding.ibFav.setImageResource(R.drawable.ic_fav_pressed)
-            }else{
+            } else {
                 binding.ibFav.setImageResource(R.drawable.ic_fav_normal)
             }
         }
 
-        private fun onClickEdit(ad: Ad): View.OnClickListener{
+        private fun onClickEdit(ad: Ad): View.OnClickListener {
             return View.OnClickListener {
                 val editIntent = Intent(activity, EditAdsAct::class.java).apply {
                     putExtra(MainActivity.EDIT_STATE, true)
@@ -89,22 +90,21 @@ class AdsRVAdapter(val activity: MainActivity) : RecyclerView.Adapter<AdsRVAdapt
         }
 
 
-
-        private fun isOwner(ad: Ad): Boolean{
+        private fun isOwner(ad: Ad): Boolean {
             return activity.mAuth.uid == ad.uid
         }
 
-        private fun showEditPanel(isOwner: Boolean){
-            if(isOwner){
+        private fun showEditPanel(isOwner: Boolean) {
+            if (isOwner) {
                 binding.editPanel.visibility = View.VISIBLE
-            }else{
+            } else {
                 binding.editPanel.visibility = View.GONE
             }
         }
 
     }
 
-    interface Listener{
+    interface Listener {
         fun onDeleteItem(ad: Ad)
         fun onAdViewed(ad: Ad)
         fun onFavClicked(ad: Ad)
