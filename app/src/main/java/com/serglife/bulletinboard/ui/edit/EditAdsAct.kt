@@ -77,6 +77,7 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         edTitleCard.setText(ad.title)
         edPrice.setText(ad.price)
         edDescription.setText(ad.description)
+        edEmail.setText(ad.email)
     }
 
     fun openChooseImageFragment(newList: List<Uri>?) {
@@ -198,6 +199,7 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
                 title = edTitleCard.text.toString(),
                 price = edPrice.text.toString(),
                 description = edDescription.text.toString(),
+                email = edEmail.text.toString(),
                 mainImage = "empty",
                 key = dbManager.db.push().key,
                 uid = dbManager.auth.uid

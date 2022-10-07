@@ -72,6 +72,8 @@
     <string name="city_desc">Город:</string>
     <string name="index_desc">Индекс:</string>
     <string name="with_send_desc">С отправкой:</string>
+    <string name="with_send_yes">Да</string>
+    <string name="with_send_no">Нет</string>
 
 
 </resources>

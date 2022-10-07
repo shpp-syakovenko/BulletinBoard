@@ -2,6 +2,7 @@ package com.serglife.bulletinboard.ui.description
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.databinding.ActivityDescriptionBinding
 import com.serglife.bulletinboard.fragment.adapters.ImageAdapter
 import com.serglife.bulletinboard.model.Ad
@@ -28,7 +29,29 @@ class DescriptionActivity : AppCompatActivity() {
 
     private fun getIntentFromMainActivity(){
         val ad = intent.getSerializableExtra(AD) as Ad
+        updateUI(ad)
+    }
+
+    private fun updateUI(ad: Ad){
         fillImageArray(ad)
+        fillTextViews(ad)
+    }
+
+    private fun fillTextViews(ad: Ad) = with(binding){
+        tvTitleDes.text = ad.title
+        tvDesc.text = ad.description
+        tvPrice.text = ad.price
+        tvTel.text = ad.tel
+        tvEmail.text = ad.email
+        tvCountry.text = ad.country
+        tvCity.text = ad.city
+        tvIndex.text = ad.index
+        tvWithSend.text = isWithSend(ad.withSend.toBoolean())
+    }
+
+    private fun isWithSend(withSend: Boolean): String {
+        return if (withSend) getString(R.string.with_send_yes)
+        else resources.getString(R.string.with_send_no)
     }
 
     private fun fillImageArray(ad: Ad){
