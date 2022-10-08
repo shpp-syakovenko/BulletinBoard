@@ -20,6 +20,7 @@ import com.google.firebase.ktx.Firebase
 import com.serglife.bulletinboard.databinding.ActivityMainBinding
 import com.serglife.bulletinboard.fragment.adapters.AdsRVAdapter
 import com.serglife.bulletinboard.model.Ad
+import com.serglife.bulletinboard.ui.description.DescriptionActivity
 import com.serglife.bulletinboard.ui.dialogs.account.AccountHelper
 import com.serglife.bulletinboard.ui.dialogs.account.DialogConst.SING_IN_STATE
 import com.serglife.bulletinboard.ui.dialogs.account.DialogConst.SING_UP_STATE
@@ -191,6 +192,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onAdViewed(ad: Ad) {
         viewModel.adViewed(ad)
+        Intent(this, DescriptionActivity::class.java)
+            .apply { putExtra(DescriptionActivity.AD, ad) }
+            .also { startActivity(it) }
     }
 
     override fun onFavClicked(ad: Ad) {

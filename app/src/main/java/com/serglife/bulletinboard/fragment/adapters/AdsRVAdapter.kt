@@ -64,10 +64,6 @@ class AdsRVAdapter(val activity: MainActivity) : RecyclerView.Adapter<AdsRVAdapt
             }
             itemView.setOnClickListener {
                 activity.onAdViewed(ad)
-                Intent(binding.root.context, DescriptionActivity::class.java)
-                    .apply { putExtra(DescriptionActivity.AD, ad) }
-                    .also { activity.startActivity(it) }
-
             }
         }
 

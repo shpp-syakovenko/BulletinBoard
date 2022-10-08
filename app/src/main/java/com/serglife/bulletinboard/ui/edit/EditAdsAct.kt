@@ -1,12 +1,12 @@
 package com.serglife.bulletinboard.ui.edit
 
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.tasks.OnCompleteListener
 import com.serglife.bulletinboard.MainActivity
 import com.serglife.bulletinboard.R
@@ -19,6 +19,7 @@ import com.serglife.bulletinboard.fragment.ImageListFragment
 import com.serglife.bulletinboard.fragment.adapters.ImageAdapter
 import com.serglife.bulletinboard.ui.dialogs.country.DialogSpinnerHelper
 import com.serglife.bulletinboard.utils.CityHelper
+import com.serglife.bulletinboard.utils.ImageManager
 import com.serglife.bulletinboard.utils.ImagePiker
 import kotlinx.coroutines.Job
 import java.io.ByteArrayOutputStream
@@ -42,6 +43,7 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         makeTransparentStatusBar()
         init()
         checkEditState()
+        imageChangeCounter()
     }
 
     override fun onStop() {
@@ -78,6 +80,7 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         edPrice.setText(ad.price)
         edDescription.setText(ad.description)
         edEmail.setText(ad.email)
+        ImageManager.fillImageArray(ad, imageAdapter)
     }
 
     fun openChooseImageFragment(newList: List<Uri>?) {
@@ -92,14 +95,14 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
 
 
     //onClicks
-    fun onClickSelectedCountry(view: View) {
+    fun onClickSelectedCountry() {
         val listCountry = CityHelper.getAllCountries(this)
         dialog.showSpinnerDialog(this, listCountry, binding.tvCountry)
         if (binding.tvCity.text.toString() != getString(R.string.selected_city)) {
             binding.tvCity.text = getString(R.string.selected_city)
         }
     }
-    fun onClickSelectedCities(view: View) {
+    fun onClickSelectedCities() {
 
         val selectedCountry = binding.tvCountry.text.toString()
 
@@ -112,12 +115,12 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         }
     }
 
-    fun onClickSelectedCat(view: View) {
+    fun onClickSelectedCat() {
             val listCategory = resources.getStringArray(R.array.category).toList()
             dialog.showSpinnerDialog(this, listCategory, binding.tvCat)
     }
 
-    fun onClickGetImages(view: View) {
+    fun onClickGetImages() {
         if (imageAdapter.list.size == 0) {
             ImagePiker.getMultiImages(this)
         } else {
@@ -126,7 +129,7 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         }
     }
 
-    fun onClickPublish(view: View) {
+    fun onClickPublish() {
         val key = if (isEditState) ad?.key else null
         ad = fillAd()
         if (isEditState) {
@@ -206,6 +209,16 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
             )
         }
         return ad
+    }
+
+    private fun imageChangeCounter(){
+        binding.vpImages.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                val counter = "${position + 1}/${binding.vpImages.adapter?.itemCount}"
+                binding.tvImageCounter.text = counter
+            }
+        })
     }
 
     // Realize interface

@@ -67,6 +67,17 @@
                             app:srcCompat="@drawable/ic_edit"
                             tools:ignore="ImageContrastCheck" />
 
+                        <TextView
+                            android:id="@+id/tvImageCounter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@color/black"
+                            android:padding="5dp"
+                            android:text="1/3"
+                            android:textColor="@color/grey"
+                            app:layout_constraintBottom_toBottomOf="@+id/vpImages"
+                            app:layout_constraintEnd_toEndOf="@+id/vpImages" />
+
                         <ProgressBar
                             android:id="@+id/pBarLoad"
                             style="?android:attr/progressBarStyle"

@@ -9,8 +9,12 @@ import android.widget.HeterogeneousExpandableList
 import android.widget.ImageView
 import androidx.core.net.toUri
 import androidx.exifinterface.media.ExifInterface
+import com.serglife.bulletinboard.fragment.adapters.ImageAdapter
+import com.serglife.bulletinboard.model.Ad
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 import java.io.File
@@ -81,7 +85,7 @@ object ImageManager {
         return@withContext bitmapList
     }
 
-    suspend fun getBitmapFromUris(uris: List<String?>): List<Bitmap> = withContext(Dispatchers.IO) {
+    private suspend fun getBitmapFromUris(uris: List<String?>): List<Bitmap> = withContext(Dispatchers.IO) {
 
         val bitmapList = mutableListOf<Bitmap>()
 
@@ -101,5 +105,13 @@ object ImageManager {
         }
 
         return@withContext bitmapList
+    }
+
+    fun fillImageArray(ad: Ad, adapter: ImageAdapter) {
+        val listUris = listOf(ad.mainImage, ad.image2, ad.image3, ad.image4, ad.image5)
+        CoroutineScope(Dispatchers.Main).launch {
+            val bitMapList = getBitmapFromUris(listUris)
+            adapter.updateAdapter(bitMapList)
+        }
     }
 }

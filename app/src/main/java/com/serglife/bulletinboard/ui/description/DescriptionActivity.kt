@@ -6,14 +6,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.core.net.toUri
+import androidx.viewpager2.widget.ViewPager2
 import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.databinding.ActivityDescriptionBinding
 import com.serglife.bulletinboard.fragment.adapters.ImageAdapter
 import com.serglife.bulletinboard.model.Ad
 import com.serglife.bulletinboard.utils.ImageManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class DescriptionActivity : AppCompatActivity() {
     lateinit var binding: ActivityDescriptionBinding
@@ -34,6 +32,7 @@ class DescriptionActivity : AppCompatActivity() {
         adapter = ImageAdapter()
         binding.viewPager.adapter = adapter
         getIntentFromMainActivity()
+        imageChangeCounter()
     }
 
     private fun getIntentFromMainActivity() {
@@ -42,7 +41,7 @@ class DescriptionActivity : AppCompatActivity() {
     }
 
     private fun updateUI(ad: Ad) {
-        fillImageArray(ad)
+        ImageManager.fillImageArray(ad, adapter)
         fillTextViews(ad)
     }
 
@@ -61,14 +60,6 @@ class DescriptionActivity : AppCompatActivity() {
     private fun isWithSend(withSend: Boolean): String {
         return if (withSend) getString(R.string.with_send_yes)
         else resources.getString(R.string.with_send_no)
-    }
-
-    private fun fillImageArray(ad: Ad) {
-        val listUris = listOf(ad.mainImage, ad.image2, ad.image3, ad.image4, ad.image5)
-        CoroutineScope(Dispatchers.Main).launch {
-            val bitMapList = ImageManager.getBitmapFromUris(listUris)
-            adapter.updateAdapter(bitMapList)
-        }
     }
 
     private fun call() {
@@ -96,6 +87,16 @@ class DescriptionActivity : AppCompatActivity() {
                 Toast.LENGTH_LONG
             ).show()
         }
+    }
+
+    private fun imageChangeCounter(){
+        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                val counter = "${position + 1}/${binding.viewPager.adapter?.itemCount}"
+                binding.tvImageCounter.text = counter
+            }
+        })
     }
 
     companion object {
