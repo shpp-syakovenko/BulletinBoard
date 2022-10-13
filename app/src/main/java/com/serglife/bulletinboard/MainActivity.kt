@@ -3,13 +3,19 @@ package com.serglife.bulletinboard
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
@@ -25,17 +31,19 @@ import com.serglife.bulletinboard.ui.dialogs.account.AccountHelper
 import com.serglife.bulletinboard.ui.dialogs.account.DialogConst.SING_IN_STATE
 import com.serglife.bulletinboard.ui.dialogs.account.DialogConst.SING_UP_STATE
 import com.serglife.bulletinboard.ui.dialogs.account.DialogHelper
-import com.serglife.bulletinboard.ui.dialogs.account.GoogleConst
 import com.serglife.bulletinboard.ui.edit.EditAdsAct
 import com.serglife.bulletinboard.viewmodel.FirebaseViewModel
+import com.squareup.picasso.Picasso
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, AdsRVAdapter.Listener {
     private lateinit var tvAccount: TextView
+    private lateinit var imAccount: ImageView
     private lateinit var binding: ActivityMainBinding
     private val dialogHelper = DialogHelper(this)
     val mAuth = Firebase.auth
     private val adapter = AdsRVAdapter(this)
     private val viewModel: FirebaseViewModel by viewModels()
+    lateinit var googleSingInLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,22 +60,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.mainContent.bNavView.selectedItemId = R.id.id_home
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == GoogleConst.GOOGLE_SING_IN_REQUEST_CODE) {
-            // Log.d("MyLog","on Activity Result!!!!!!!!!!!!")
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-
-            try {
-                val account = task.getResult(ApiException::class.java)
-                if (account != null) {
-                    dialogHelper.accHelper.singInFireBaseWithGoogle(account.idToken!!)
+    private fun onActivityResult() {
+        googleSingInLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+                try {
+                    val account = task.getResult(ApiException::class.java)
+                    if (account != null) {
+                        dialogHelper.accHelper.singInFireBaseWithGoogle(account.idToken!!)
+                    }
+                } catch (e: ApiException) {
+                    Log.d("MyLog", "Api exception: ${e.message}")
                 }
-            } catch (e: ApiException) {
-                Log.d("MyLog", "Api exception: ${e.message}")
             }
-        }
-
-        super.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onStart() {
@@ -83,6 +88,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun init() {
+        onActivityResult()
+        navViewSettings()
         setSupportActionBar(binding.mainContent.toolbar)
         val toggle = ActionBarDrawerToggle(
             this,
@@ -95,6 +102,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
         binding.navView.setNavigationItemSelectedListener(this)
         tvAccount = binding.navView.getHeaderView(0).findViewById(R.id.tvAccountEmail)
+        imAccount = binding.navView.getHeaderView(0).findViewById(R.id.imAccountImage)
     }
 
     private fun initRecyclerView() {
@@ -171,13 +179,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
            dialogHelper.accHelper.singAnonymously(object : AccountHelper.Listener{
                override fun onComplete() {
                    tvAccount.text = resources.getString(R.string.guest)
+                   imAccount.setImageResource(R.drawable.ic_account_def)
                }
 
            })
         } else if(user.isAnonymous) {
              tvAccount.text = resources.getString(R.string.guest)
+             imAccount.setImageResource(R.drawable.ic_account_def)
         }else if(!user.isAnonymous){
             tvAccount.text = user.email
+            Picasso.get().load(user.photoUrl).into(imAccount)
          }
     }
 
@@ -199,5 +210,29 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onFavClicked(ad: Ad) {
         viewModel.onFavClick(ad)
+    }
+
+    private fun navViewSettings() = with(binding){
+        val menu = navView.menu
+        val adsCat = menu.findItem(R.id.adsCat)
+        val spanAdsCat = SpannableString(adsCat.title)
+        spanAdsCat.setSpan(
+            ForegroundColorSpan(ContextCompat.getColor(this@MainActivity,R.color.red)),
+            0,
+            adsCat.title.length,
+            0
+        )
+        adsCat.title = spanAdsCat
+
+        val accCat = menu.findItem(R.id.accCat)
+        val spanAccCat = SpannableString(accCat.title)
+        spanAccCat.setSpan(
+            ForegroundColorSpan(ContextCompat.getColor(this@MainActivity,R.color.red)),
+            0,
+            accCat.title.length,
+            0
+        )
+        accCat.title = spanAccCat
+
     }
 }
