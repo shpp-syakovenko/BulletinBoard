@@ -95,14 +95,14 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
 
 
     //onClicks
-    fun onClickSelectedCountry() {
+    fun onClickSelectedCountry(view: View) {
         val listCountry = CityHelper.getAllCountries(this)
         dialog.showSpinnerDialog(this, listCountry, binding.tvCountry)
         if (binding.tvCity.text.toString() != getString(R.string.selected_city)) {
             binding.tvCity.text = getString(R.string.selected_city)
         }
     }
-    fun onClickSelectedCities() {
+    fun onClickSelectedCities(view: View) {
 
         val selectedCountry = binding.tvCountry.text.toString()
 
@@ -115,12 +115,12 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         }
     }
 
-    fun onClickSelectedCat() {
+    fun onClickSelectedCat(view: View) {
             val listCategory = resources.getStringArray(R.array.category).toList()
             dialog.showSpinnerDialog(this, listCategory, binding.tvCat)
     }
 
-    fun onClickGetImages() {
+    fun onClickGetImages(view: View) {
         if (imageAdapter.list.size == 0) {
             ImagePiker.getMultiImages(this)
         } else {
@@ -129,7 +129,7 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         }
     }
 
-    fun onClickPublish() {
+    fun onClickPublish(view: View) {
         val key = if (isEditState) ad?.key else null
         ad = fillAd()
         if (isEditState) {
@@ -205,7 +205,8 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
                 email = edEmail.text.toString(),
                 mainImage = "empty",
                 key = dbManager.db.push().key,
-                uid = dbManager.auth.uid
+                uid = dbManager.auth.uid,
+                time = System.currentTimeMillis().toString()
             )
         }
         return ad

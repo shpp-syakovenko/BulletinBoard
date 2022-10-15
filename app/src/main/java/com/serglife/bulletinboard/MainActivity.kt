@@ -17,6 +17,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.navigation.NavigationView
@@ -44,6 +45,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val adapter = AdsRVAdapter(this)
     private val viewModel: FirebaseViewModel by viewModels()
     lateinit var googleSingInLauncher: ActivityResultLauncher<Intent>
+    private var clearUpdate: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,8 +53,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         init()
         initViewModel()
         initRecyclerView()
-        viewModel.loadAllAd()
         bottomMenuOnClick()
+        scrollListener()
     }
 
     override fun onResume() {
@@ -82,8 +84,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun initViewModel() {
         viewModel.liveAdsData.observe(this) { list ->
-            adapter.updateAdapter(list)
-            binding.mainContent.tvEmpty.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
+            if(!clearUpdate){
+                adapter.updateAdapter(list)
+            }else{
+                adapter.updateAdapterWithClear(list)
+            }
+
+            binding.mainContent.tvEmpty.visibility = if (adapter.itemCount == 0) View.VISIBLE else View.GONE
         }
     }
 
@@ -112,6 +119,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun bottomMenuOnClick() = with(binding) {
         mainContent.bNavView.setOnNavigationItemSelectedListener { item ->
+            clearUpdate = true
             when (item.itemId) {
                 R.id.id_new_ad -> {
                     val intent = Intent(this@MainActivity, EditAdsAct::class.java)
@@ -126,7 +134,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     mainContent.toolbar.title = getString(R.string.ad_my_favs)
                 }
                 R.id.id_home -> {
-                    viewModel.loadAllAd()
+                    viewModel.loadAllAd("0")
                     mainContent.toolbar.title = getString(R.string.def)
                 }
 
@@ -137,7 +145,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-
+        clearUpdate = true
         when (item.itemId) {
             R.id.id_my_ads -> {
                 Toast.makeText(this, "Press in my_ads", Toast.LENGTH_LONG).show()
@@ -192,11 +200,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
          }
     }
 
-    companion object{
-        const val EDIT_STATE = "edit_state"
-        const val ADS_DATA = "ads_data"
-    }
-
     override fun onDeleteItem(ad: Ad) {
         viewModel.deleteItem(ad)
     }
@@ -233,6 +236,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             0
         )
         accCat.title = spanAccCat
+    }
 
+    private fun scrollListener() = with(binding.mainContent) {
+        rcView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!recyclerView.canScrollVertically(SCROLL_DIRECTION_BOTTOM)
+                    && newState == RecyclerView.SCROLL_STATE_IDLE
+                ) {
+                    clearUpdate = false
+                    val adsList = viewModel.liveAdsData.value!!
+                    if(adsList.isNotEmpty()) {
+                        adsList[adsList.size - 1].let { viewModel.loadAllAd(it.time) }
+                    }
+                }
+            }
+        })
+    }
+
+    companion object{
+        const val EDIT_STATE = "edit_state"
+        const val ADS_DATA = "ads_data"
+        const val SCROLL_DIRECTION_BOTTOM = 1
     }
 }

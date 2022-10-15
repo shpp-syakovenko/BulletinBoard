@@ -32,6 +32,16 @@ class AdsRVAdapter(val activity: MainActivity) : RecyclerView.Adapter<AdsRVAdapt
     }
 
     fun updateAdapter(newList: List<Ad>) {
+        val tempList = mutableListOf<Ad>()
+        tempList.addAll(list)
+        tempList.addAll(newList)
+        val diffResult = DiffUtil.calculateDiff(DiffUtilHelper(list, tempList))
+        diffResult.dispatchUpdatesTo(this)
+        list.clear()
+        list.addAll(tempList)
+    }
+
+    fun updateAdapterWithClear(newList: List<Ad>) {
         val diffResult = DiffUtil.calculateDiff(DiffUtilHelper(list, newList))
         diffResult.dispatchUpdatesTo(this)
         list.clear()

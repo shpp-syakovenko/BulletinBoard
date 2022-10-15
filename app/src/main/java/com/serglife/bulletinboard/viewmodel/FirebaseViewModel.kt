@@ -9,8 +9,8 @@ class FirebaseViewModel : ViewModel() {
     private val dbManager = DbManager()
     val liveAdsData = MutableLiveData<MutableList<Ad>>()
 
-    fun loadAllAd(){
-        dbManager.getAllAds(object : DbManager.ReadDataCallback{
+    fun loadAllAd(lastTime: String){
+        dbManager.getAllAds(lastTime, object : DbManager.ReadDataCallback{
             override fun redData(list: MutableList<Ad>) {
                 liveAdsData.value = list
             }
@@ -62,5 +62,4 @@ class FirebaseViewModel : ViewModel() {
             }
         })
     }
-
 }
