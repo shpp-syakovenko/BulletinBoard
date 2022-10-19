@@ -18,7 +18,13 @@ class DbManager {
         if (auth.uid != null) {
             db.child(ad.key ?: "empty").child(auth.uid!!).child(AD_NODE).setValue(ad)
                 .addOnCompleteListener {
-                    finishListener.onFinish()
+                    val adFilter = AdFilter(time = ad.time, catTime = "${ad.category}_${ad.time}")
+                    db.child(ad.key ?: "empty")
+                        .child(FILTER_NODE)
+                        .setValue(adFilter)
+                        .addOnCompleteListener {
+                            finishListener.onFinish()
+                        }
                 }
         }
     }
@@ -72,12 +78,35 @@ class DbManager {
         readDataFromDb(query, readDataCallback)
     }
 
-    fun getAllAds(lastTime: String, readDataCallback: ReadDataCallback?) {
+    fun getAllAdsFirstPage(readDataCallback: ReadDataCallback?) {
         val query = db
-            .orderByChild(auth.uid + "/ad/time")
-            .startAfter(lastTime)
-            .limitToFirst(ADS_LIMIT)
+            .orderByChild(AD_FILTER_TIME_NODE)
+            .limitToLast(ADS_LIMIT)
+        readDataFromDb(query, readDataCallback)
+    }
 
+    fun getAllAdsNextPage(time: String, readDataCallback: ReadDataCallback?) {
+        val query = db
+            .orderByChild(AD_FILTER_TIME_NODE)
+            .endBefore(time)
+            .limitToLast(ADS_LIMIT)
+        readDataFromDb(query, readDataCallback)
+    }
+
+    fun getAllAdsFromCatFirstPage(cat: String, readDataCallback: ReadDataCallback?) {
+        val query = db
+            .orderByChild(AD_FILTER_CAT_TIME_NODE)
+            .startAt(cat)
+            .endAt(cat + "_\uf8ff")
+            .limitToLast(ADS_LIMIT)
+        readDataFromDb(query, readDataCallback)
+    }
+
+    fun getAllAdsFromCatNextPage(catTime: String, readDataCallback: ReadDataCallback?) {
+        val query = db
+            .orderByChild(AD_FILTER_CAT_TIME_NODE)
+            .endBefore(catTime)
+            .limitToLast(ADS_LIMIT)
         readDataFromDb(query, readDataCallback)
     }
 
@@ -87,8 +116,6 @@ class DbManager {
             if(it.isSuccessful) listener.onFinish()
         }
     }
-
-
 
     private fun readDataFromDb(query: Query, readDataCallback: ReadDataCallback?) {
         query.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -130,6 +157,9 @@ class DbManager {
 
     companion object{
         const val AD_NODE = "ad"
+        const val FILTER_NODE = "adFilter"
+        const val AD_FILTER_TIME_NODE = "/adFilter/time"
+        const val AD_FILTER_CAT_TIME_NODE = "/adFilter/catTime"
         const val INFO_NODE = "info"
         const val MAIN_NODE = "main"
         const val FAVS_NODE = "favs"

@@ -10,7 +10,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -46,6 +45,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val viewModel: FirebaseViewModel by viewModels()
     lateinit var googleSingInLauncher: ActivityResultLauncher<Intent>
     private var clearUpdate: Boolean = true
+    private var currentCategory: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,16 +85,30 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun initViewModel() {
         viewModel.liveAdsData.observe(this) { list ->
             if(!clearUpdate){
-                adapter.updateAdapter(list)
+                adapter.updateAdapter(getAdsByCategory(list))
             }else{
-                adapter.updateAdapterWithClear(list)
+                adapter.updateAdapterWithClear(getAdsByCategory(list))
             }
 
             binding.mainContent.tvEmpty.visibility = if (adapter.itemCount == 0) View.VISIBLE else View.GONE
         }
     }
 
+    private fun getAdsByCategory(list: MutableList<Ad>): MutableList<Ad>{
+        val tempList = mutableListOf<Ad>()
+        tempList.addAll(list)
+        if(currentCategory != getString(R.string.def)){
+            tempList.clear()
+            list.forEach {
+                if(currentCategory == it.category) tempList.add(it)
+            }
+        }
+        tempList.reverse()
+        return tempList
+    }
+
     private fun init() {
+        currentCategory = getString(R.string.def)
         onActivityResult()
         navViewSettings()
         setSupportActionBar(binding.mainContent.toolbar)
@@ -114,7 +128,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun initRecyclerView() {
         binding.mainContent.rcView.adapter = adapter
-
     }
 
     private fun bottomMenuOnClick() = with(binding) {
@@ -134,7 +147,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     mainContent.toolbar.title = getString(R.string.ad_my_favs)
                 }
                 R.id.id_home -> {
-                    viewModel.loadAllAd("0")
+                    currentCategory = getString(R.string.def)
+                    viewModel.loadAllAdFirstPage()
                     mainContent.toolbar.title = getString(R.string.def)
                 }
 
@@ -148,19 +162,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         clearUpdate = true
         when (item.itemId) {
             R.id.id_my_ads -> {
-                Toast.makeText(this, "Press in my_ads", Toast.LENGTH_LONG).show()
+                viewModel.loadMyAd()
+                binding.mainContent.toolbar.title = getString(R.string.ad_my_ads)
             }
             R.id.id_car -> {
-                Toast.makeText(this, "Press in id_car", Toast.LENGTH_LONG).show()
+                getAdsFromCat(getString(R.string.ad_car))
             }
             R.id.id_pc -> {
-                Toast.makeText(this, "Press in id_pc", Toast.LENGTH_LONG).show()
+                getAdsFromCat(getString(R.string.ad_pc))
             }
             R.id.id_smartphone -> {
-                Toast.makeText(this, "Press in id_smartphone", Toast.LENGTH_LONG).show()
+                getAdsFromCat(getString(R.string.ad_smartphone))
             }
             R.id.id_appliances -> {
-                Toast.makeText(this, "Press in id_appliances", Toast.LENGTH_LONG).show()
+                getAdsFromCat(getString(R.string.ad_appliances))
             }
             R.id.id_sing_up -> {
                 dialogHelper.createDialog(SING_UP_STATE)
@@ -180,6 +195,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    private fun getAdsFromCat(cat: String){
+        currentCategory = cat
+        viewModel.loadAllAdFromCat(cat)
+        binding.mainContent.toolbar.title = cat
     }
 
     fun uiUpdate(user: FirebaseUser?) {
@@ -248,11 +269,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     clearUpdate = false
                     val adsList = viewModel.liveAdsData.value!!
                     if(adsList.isNotEmpty()) {
-                        adsList[adsList.size - 1].let { viewModel.loadAllAd(it.time) }
+                        getAdsFromCat(adsList)
                     }
                 }
             }
         })
+    }
+
+    private fun getAdsFromCat(adsList: MutableList<Ad>) {
+        adsList[0].let {
+            if (currentCategory == getString(R.string.def)) {
+                viewModel.loadAllAdNextPage(it.time)
+            } else {
+                val catTime = "${it.category}_${it.time}"
+                viewModel.loadAllAdFromCatNextPage(catTime)
+            }
+        }
     }
 
     companion object{
