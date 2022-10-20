@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -32,6 +33,7 @@ import com.serglife.bulletinboard.ui.dialogs.account.DialogConst.SING_IN_STATE
 import com.serglife.bulletinboard.ui.dialogs.account.DialogConst.SING_UP_STATE
 import com.serglife.bulletinboard.ui.dialogs.account.DialogHelper
 import com.serglife.bulletinboard.ui.edit.EditAdsAct
+import com.serglife.bulletinboard.ui.filter.FilterActivity
 import com.serglife.bulletinboard.viewmodel.FirebaseViewModel
 import com.squareup.picasso.Picasso
 
@@ -55,6 +57,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         initRecyclerView()
         bottomMenuOnClick()
         scrollListener()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(item.itemId == R.id.id_filter){
+            startActivity(Intent(this, FilterActivity::class.java))
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onResume() {

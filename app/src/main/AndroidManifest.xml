@@ -16,6 +16,10 @@
         tools:replace="android:theme"
         tools:targetApi="31">
         <activity
+            android:name=".ui.filter.FilterActivity"
+            android:theme="@style/MyTheme.Filter"
+            android:exported="false" />
+        <activity
             android:name=".ui.description.DescriptionActivity"
             android:exported="false" />
 

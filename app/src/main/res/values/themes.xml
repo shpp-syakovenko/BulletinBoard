@@ -40,4 +40,11 @@
         <item name="colorControlNormal">@color/green_main</item>
         <item name="fontFamily">sans-serif-condensed</item>
     </style>
+
+    <style name="MyTheme.Filter" parent="Theme.MaterialComponents.Light">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
 </resources>

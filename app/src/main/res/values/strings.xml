@@ -75,6 +75,8 @@
     <string name="with_send_yes">Да</string>
     <string name="with_send_no">Нет</string>
 
+    <!-- Filter Activity -->
+    <string name="done_filter">Применить фильтер</string>
 
 
 </resources>
