@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Filter
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
@@ -34,6 +35,7 @@ import com.serglife.bulletinboard.ui.dialogs.account.DialogConst.SING_UP_STATE
 import com.serglife.bulletinboard.ui.dialogs.account.DialogHelper
 import com.serglife.bulletinboard.ui.edit.EditAdsAct
 import com.serglife.bulletinboard.ui.filter.FilterActivity
+import com.serglife.bulletinboard.utils.FilterManager
 import com.serglife.bulletinboard.viewmodel.FirebaseViewModel
 import com.squareup.picasso.Picasso
 
@@ -46,8 +48,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val adapter = AdsRVAdapter(this)
     private val viewModel: FirebaseViewModel by viewModels()
     lateinit var googleSingInLauncher: ActivityResultLauncher<Intent>
+    lateinit var filterLauncher: ActivityResultLauncher<Intent>
     private var clearUpdate: Boolean = true
     private var currentCategory: String? = null
+    private var filter: String = FilterActivity.EMPTY
+    private var filterDb: String = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +72,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(item.itemId == R.id.id_filter){
-            startActivity(Intent(this, FilterActivity::class.java))
+            val intentFilter = Intent(this@MainActivity, FilterActivity::class.java).apply {
+                putExtra(FilterActivity.FILTER_KEY, filter)
+            }
+            filterLauncher.launch(intentFilter)
         }
         return super.onOptionsItemSelected(item)
     }
@@ -89,6 +98,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     Log.d("MyLog", "Api exception: ${e.message}")
                 }
             }
+    }
+
+    private fun onActivityResultFilter(){
+        filterLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+            if(it.resultCode == RESULT_OK){
+                filter = it.data?.getStringExtra(FilterActivity.FILTER_KEY)!!
+                //Log.d("MyLog","filter: $filter")
+                //Log.d("MyLog","getFilter: ${FilterManager.getFilter(filter)}")
+                filterDb = FilterManager.getFilter(filter)
+            }
+        }
     }
 
     override fun onStart() {
@@ -124,6 +144,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun init() {
         currentCategory = getString(R.string.def)
         onActivityResult()
+        onActivityResultFilter()
         navViewSettings()
         setSupportActionBar(binding.mainContent.toolbar)
         val toggle = ActionBarDrawerToggle(
@@ -162,7 +183,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 R.id.id_home -> {
                     currentCategory = getString(R.string.def)
-                    viewModel.loadAllAdFirstPage()
+                    //Log.d("MyLog","filterDb: $filterDb")
+                    viewModel.loadAllAdFirstPage(filterDb)
                     mainContent.toolbar.title = getString(R.string.def)
                 }
 

@@ -1,5 +1,6 @@
 package com.serglife.bulletinboard.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.serglife.bulletinboard.model.Ad
@@ -9,8 +10,8 @@ class FirebaseViewModel : ViewModel() {
     private val dbManager = DbManager()
     val liveAdsData = MutableLiveData<MutableList<Ad>>()
 
-    fun loadAllAdFirstPage(){
-        dbManager.getAllAdsFirstPage( object : DbManager.ReadDataCallback{
+    fun loadAllAdFirstPage(filter: String){
+        dbManager.getAllAdsFirstPage(filter, object : DbManager.ReadDataCallback{
             override fun redData(list: MutableList<Ad>) {
                 liveAdsData.value = list
             }

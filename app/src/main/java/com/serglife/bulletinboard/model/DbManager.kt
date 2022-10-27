@@ -1,5 +1,6 @@
 package com.serglife.bulletinboard.model
 
+import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -8,6 +9,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import com.serglife.bulletinboard.utils.FilterManager
 
 class DbManager {
     val db = Firebase.database.getReference(MAIN_NODE)
@@ -18,7 +20,7 @@ class DbManager {
         if (auth.uid != null) {
             db.child(ad.key ?: "empty").child(auth.uid!!).child(AD_NODE).setValue(ad)
                 .addOnCompleteListener {
-                    val adFilter = AdFilter(time = ad.time, catTime = "${ad.category}_${ad.time}")
+                    val adFilter = FilterManager.createFilter(ad)
                     db.child(ad.key ?: "empty")
                         .child(FILTER_NODE)
                         .setValue(adFilter)
@@ -78,11 +80,25 @@ class DbManager {
         readDataFromDb(query, readDataCallback)
     }
 
-    fun getAllAdsFirstPage(readDataCallback: ReadDataCallback?) {
-        val query = db
-            .orderByChild(AD_FILTER_TIME_NODE)
-            .limitToLast(ADS_LIMIT)
+    fun getAllAdsFirstPage(filter: String, readDataCallback: ReadDataCallback?) {
+        val query = if(filter.isEmpty()){
+            db.orderByChild(AD_FILTER_TIME_NODE).limitToLast(ADS_LIMIT)
+        }else{
+            getAllAdsByFilterFirstPage(filter)
+        }
         readDataFromDb(query, readDataCallback)
+    }
+
+    fun getAllAdsByFilterFirstPage(tempFilter: String): Query {
+        val orderBy = tempFilter.split("|")[0]
+        val filter = tempFilter.split("|")[1]
+        Log.d("MyLog", "orderBy: $orderBy filter: $filter")
+
+        return db
+            .orderByChild("/adFilter/$orderBy")
+            .startAt(filter)
+            .endAt(filter + "\uf8ff")
+            .limitToLast(ADS_LIMIT)
     }
 
     fun getAllAdsNextPage(time: String, readDataCallback: ReadDataCallback?) {
@@ -159,7 +175,7 @@ class DbManager {
         const val AD_NODE = "ad"
         const val FILTER_NODE = "adFilter"
         const val AD_FILTER_TIME_NODE = "/adFilter/time"
-        const val AD_FILTER_CAT_TIME_NODE = "/adFilter/catTime"
+        const val AD_FILTER_CAT_TIME_NODE = "/adFilter/cat_time"
         const val INFO_NODE = "info"
         const val MAIN_NODE = "main"
         const val FAVS_NODE = "favs"

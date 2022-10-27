@@ -1,5 +1,6 @@
 package com.serglife.bulletinboard.ui.filter
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -19,6 +20,7 @@ class FilterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(ActivityFilterBinding.inflate(layoutInflater).also { binding = it }.root)
         actionBarSettings()
+        getFilter()
         onClickSelectedCountry()
         onClickSelectedCities()
         onClickDone()
@@ -31,6 +33,17 @@ class FilterActivity : AppCompatActivity() {
 
     private fun actionBarSettings() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private fun getFilter() = with(binding){
+        val filter = intent.getStringExtra(FILTER_KEY)
+        if(filter != null && filter != EMPTY){
+            val filterList = filter.split("_")
+            if(filterList[0] != EMPTY) tvCountry.text = filterList[0]
+            if(filterList[1] != EMPTY) tvCity.text = filterList[1]
+            if(filterList[2] != EMPTY) edIndex.setText(filterList[2])
+            checkBoxWithSend.isChecked = filterList[3].toBoolean()
+        }
     }
 
     private fun createFilter(): String = with(binding) {
@@ -48,6 +61,9 @@ class FilterActivity : AppCompatActivity() {
                 && value.isNotEmpty()
             ) {
                 sBuilder.append(value)
+                if (index != arrayTempFilter.size - 1) sBuilder.append("_")
+            }else{
+                sBuilder.append(EMPTY)
                 if (index != arrayTempFilter.size - 1) sBuilder.append("_")
             }
         }
@@ -80,8 +96,17 @@ class FilterActivity : AppCompatActivity() {
 
     private fun onClickDone() = with(binding) {
         btDone.setOnClickListener {
-            Log.d("MyLog", "string: ${createFilter()}")
+            val intentFilter = Intent().apply {
+                putExtra(FILTER_KEY, createFilter())
+            }
+            setResult(RESULT_OK, intentFilter)
+            finish()
         }
+    }
+
+    companion object{
+        const val FILTER_KEY = "filter_key"
+        const val EMPTY = "empty"
     }
 
 
