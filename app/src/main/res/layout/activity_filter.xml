@@ -163,9 +163,16 @@
                     android:id="@+id/btDone"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="5dp"
                     android:backgroundTint="@color/white"
                     android:text="@string/done_filter"
+                    android:textColor="@color/green_main" />
+                <Button
+                    android:id="@+id/btClear"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
+                    android:backgroundTint="@color/white"
+                    android:text="@string/clear_filter"
                     android:textColor="@color/green_main" />
 
 

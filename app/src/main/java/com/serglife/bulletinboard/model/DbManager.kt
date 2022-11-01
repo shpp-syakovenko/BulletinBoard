@@ -1,5 +1,6 @@
 package com.serglife.bulletinboard.model
 
+import android.annotation.SuppressLint
 import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -92,38 +93,79 @@ class DbManager {
     fun getAllAdsByFilterFirstPage(tempFilter: String): Query {
         val orderBy = tempFilter.split("|")[0]
         val filter = tempFilter.split("|")[1]
-        Log.d("MyLog", "orderBy: $orderBy filter: $filter")
 
         return db
             .orderByChild("/adFilter/$orderBy")
             .startAt(filter)
             .endAt(filter + "\uf8ff")
             .limitToLast(ADS_LIMIT)
+
     }
 
-    fun getAllAdsNextPage(time: String, readDataCallback: ReadDataCallback?) {
-        val query = db
-            .orderByChild(AD_FILTER_TIME_NODE)
-            .endBefore(time)
+    fun getAllAdsFromCatByFilterFirstPage(cat: String, tempFilter: String): Query {
+        val orderBy = "cat_" + tempFilter.split("|")[0]
+        val filter = cat + "_" + tempFilter.split("|")[1]
+
+        return db
+            .orderByChild("/adFilter/$orderBy")
+            .startAt(filter)
+            .endAt(filter + "\uf8ff")
             .limitToLast(ADS_LIMIT)
+
+    }
+
+    fun getAllAdsNextPage(time: String, filter: String, readDataCallback: ReadDataCallback?) {
+         if (filter.isEmpty()) {
+           val query = db.orderByChild(AD_FILTER_TIME_NODE).endBefore(time).limitToLast(ADS_LIMIT)
+           readDataFromDb(query, readDataCallback)
+        } else {
+            getAllAdsByFilterNextPage(filter, time, readDataCallback)
+        }
+    }
+
+    private fun getAllAdsByFilterNextPage(tempFilter: String, time: String, readDataCallback: ReadDataCallback?) {
+        val orderBy = tempFilter.split("|")[0]
+        val filter = tempFilter.split("|")[1]
+        val query = db
+            .orderByChild("/adFilter/$orderBy")
+            .endBefore(filter + "_$time")
+            .limitToLast(ADS_LIMIT)
+        readNextPageFromDb(query, filter, orderBy, readDataCallback)
+    }
+
+    fun getAllAdsFromCatFirstPage(cat: String, filter: String, readDataCallback: ReadDataCallback?) {
+        val query =  if(filter.isEmpty()){
+            db
+                .orderByChild(AD_FILTER_CAT_TIME_NODE)
+                .startAt(cat)
+                .endAt(cat + "_\uf8ff")
+                .limitToLast(ADS_LIMIT)
+        }else{
+            getAllAdsFromCatByFilterFirstPage(cat, filter)
+        }
         readDataFromDb(query, readDataCallback)
     }
 
-    fun getAllAdsFromCatFirstPage(cat: String, readDataCallback: ReadDataCallback?) {
-        val query = db
-            .orderByChild(AD_FILTER_CAT_TIME_NODE)
-            .startAt(cat)
-            .endAt(cat + "_\uf8ff")
-            .limitToLast(ADS_LIMIT)
-        readDataFromDb(query, readDataCallback)
+    fun getAllAdsFromCatNextPage(cat: String, time: String, filter: String, readDataCallback: ReadDataCallback?) {
+        if(filter.isEmpty()){
+            val query = db
+                .orderByChild(AD_FILTER_CAT_TIME_NODE)
+                .endBefore(cat + "_$time")
+                .limitToLast(ADS_LIMIT)
+            readDataFromDb(query, readDataCallback)
+        }else{
+            getAllAdsFromCatByFilterNextPage(cat, time, filter, readDataCallback)
+        }
     }
 
-    fun getAllAdsFromCatNextPage(catTime: String, readDataCallback: ReadDataCallback?) {
+    private fun getAllAdsFromCatByFilterNextPage(cat: String, time:String, tempFilter: String, readDataCallback: ReadDataCallback?) {
+        val orderBy = "cat_" + tempFilter.split("|")[0]
+        val filter = cat + tempFilter.split("|")[1]
         val query = db
-            .orderByChild(AD_FILTER_CAT_TIME_NODE)
-            .endBefore(catTime)
+            .orderByChild("/adFilter/$orderBy")
+            .endBefore(filter + "_$time")
             .limitToLast(ADS_LIMIT)
-        readDataFromDb(query, readDataCallback)
+        readNextPageFromDb(query, filter, orderBy, readDataCallback)
     }
 
     fun deleteAd(ad: Ad, listener: FinishWorkListener){
@@ -132,6 +174,7 @@ class DbManager {
             if(it.isSuccessful) listener.onFinish()
         }
     }
+
 
     private fun readDataFromDb(query: Query, readDataCallback: ReadDataCallback?) {
         query.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -158,12 +201,47 @@ class DbManager {
                 }
                 readDataCallback?.redData(listAd)
             }
-
             override fun onCancelled(error: DatabaseError) {
             }
-
         })
     }
+
+    private fun readNextPageFromDb(query: Query, filter: String, orderBy: String, readDataCallback: ReadDataCallback?) {
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val listAd = mutableListOf<Ad>()
+                for (item in snapshot.children) {
+
+                    var ad:Ad? = null
+                    item.children.forEach {
+                        if(ad == null) ad = it.child(AD_NODE).getValue(Ad::class.java)
+                    }
+                    val infoItem = item.child(INFO_NODE).getValue(InfoItem::class.java)
+                    val filterNodeValue = item.child(FILTER_NODE).child(orderBy).value.toString()
+
+
+                    val favsCounter = item.child(FAVS_NODE).childrenCount.toString()
+                    val isFavs = auth.uid?.let { item.child(FAVS_NODE).child(it).getValue(String::class.java) }
+
+                    ad?.apply {
+                        isFav = isFavs != null
+                        viewsCounter = infoItem?.viewsCounter ?: "0"
+                        emailsCounter = infoItem?.emailsCounter ?: "0"
+                        callsCounter = infoItem?.callsCounter ?: "0"
+                        favCounter = favsCounter
+                    }
+                    if(ad != null && filterNodeValue.startsWith(filter)) listAd.add(ad!!)
+                }
+                readDataCallback?.redData(listAd)
+            }
+            override fun onCancelled(error: DatabaseError) {
+            }
+        })
+    }
+
+
+
+
     interface ReadDataCallback {
         fun redData(list: MutableList<Ad>)
     }

@@ -10,17 +10,17 @@ object FilterManager {
             time = ad.time,
             cat_time = "${ad.category}_${ad.time}",
 
-            cat_country_withSent_time = "${ad.category}_${ad.country}_${ad.withSend}_${ad.time}",
-            cat_country_city_withSent_time = "${ad.category}_${ad.country}_${ad.city}_${ad.withSend}_${ad.time}",
-            cat_country_city_index_withSent_time = "${ad.category}_${ad.country}_${ad.city}_${ad.index}_${ad.withSend}_${ad.time}",
-            cat_index_withSent_time = "${ad.category}_${ad.index}_${ad.withSend}_${ad.time}",
-            cat_withSent_time = "${ad.category}_${ad.withSend}_${ad.time}",
+            cat_country_withSend_time = "${ad.category}_${ad.country}_${ad.withSend}_${ad.time}",
+            cat_country_city_withSend_time = "${ad.category}_${ad.country}_${ad.city}_${ad.withSend}_${ad.time}",
+            cat_country_city_index_withSend_time = "${ad.category}_${ad.country}_${ad.city}_${ad.index}_${ad.withSend}_${ad.time}",
+            cat_index_withSend_time = "${ad.category}_${ad.index}_${ad.withSend}_${ad.time}",
+            cat_withSend_time = "${ad.category}_${ad.withSend}_${ad.time}",
 
-            country_withSent_time = "${ad.country}_${ad.withSend}_${ad.time}",
-            country_city_withSent_time = "${ad.country}_${ad.city}_${ad.withSend}_${ad.time}",
-            country_city_index_withSent_time = "${ad.country}_${ad.city}_${ad.index}_${ad.withSend}_${ad.time}",
-            index_withSent_time = "${ad.index}_${ad.withSend}_${ad.time}",
-            withSent_time = "${ad.withSend}_${ad.time}"
+            country_withSend_time = "${ad.country}_${ad.withSend}_${ad.time}",
+            country_city_withSend_time = "${ad.country}_${ad.city}_${ad.withSend}_${ad.time}",
+            country_city_index_withSend_time = "${ad.country}_${ad.city}_${ad.index}_${ad.withSend}_${ad.time}",
+            index_withSend_time = "${ad.index}_${ad.withSend}_${ad.time}",
+            withSend_time = "${ad.withSend}_${ad.time}"
         )
 
     }

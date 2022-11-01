@@ -107,6 +107,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 //Log.d("MyLog","filter: $filter")
                 //Log.d("MyLog","getFilter: ${FilterManager.getFilter(filter)}")
                 filterDb = FilterManager.getFilter(filter)
+            }else if(it.resultCode == RESULT_CANCELED){
+                filterDb = ""
+                filter = FilterActivity.EMPTY
             }
         }
     }
@@ -187,7 +190,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     viewModel.loadAllAdFirstPage(filterDb)
                     mainContent.toolbar.title = getString(R.string.def)
                 }
-
             }
 
             true
@@ -235,7 +237,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun getAdsFromCat(cat: String){
         currentCategory = cat
-        viewModel.loadAllAdFromCat(cat)
+        viewModel.loadAllAdFromCat(cat, filterDb)
         binding.mainContent.toolbar.title = cat
     }
 
@@ -315,10 +317,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun getAdsFromCat(adsList: MutableList<Ad>) {
         adsList[0].let {
             if (currentCategory == getString(R.string.def)) {
-                viewModel.loadAllAdNextPage(it.time)
+                viewModel.loadAllAdNextPage(it.time, filterDb)
             } else {
-                val catTime = "${it.category}_${it.time}"
-                viewModel.loadAllAdFromCatNextPage(catTime)
+                viewModel.loadAllAdFromCatNextPage(it.category!!, it.time, filterDb)
             }
         }
     }

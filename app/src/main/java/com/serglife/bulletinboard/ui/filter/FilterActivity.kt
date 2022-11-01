@@ -24,6 +24,7 @@ class FilterActivity : AppCompatActivity() {
         onClickSelectedCountry()
         onClickSelectedCities()
         onClickDone()
+        onClickClear()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -101,6 +102,16 @@ class FilterActivity : AppCompatActivity() {
             }
             setResult(RESULT_OK, intentFilter)
             finish()
+        }
+    }
+
+    private fun onClickClear() = with(binding) {
+        btClear.setOnClickListener {
+            tvCountry.text = getString(R.string.selected_country)
+            tvCity.text = getString(R.string.selected_city)
+            edIndex.setText("")
+            checkBoxWithSend.isChecked = false
+            setResult(RESULT_CANCELED)
         }
     }
 
