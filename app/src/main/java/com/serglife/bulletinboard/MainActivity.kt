@@ -1,7 +1,6 @@
 package com.serglife.bulletinboard
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -9,16 +8,18 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Filter
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.navigation.NavigationView
@@ -59,6 +60,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(ActivityMainBinding.inflate(layoutInflater).also { binding = it }.root)
         init()
+        initAds()
         initViewModel()
         initRecyclerView()
         bottomMenuOnClick()
@@ -80,9 +82,31 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onStart() {
+        super.onStart()
+        uiUpdate(mAuth.currentUser)
+    }
+
     override fun onResume() {
         super.onResume()
         binding.mainContent.bNavView.selectedItemId = R.id.id_home
+        binding.mainContent.adView2.resume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.mainContent.adView2.pause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.mainContent.adView2.destroy()
+    }
+
+    private fun initAds(){
+        MobileAds.initialize(this)
+        val adRequest = AdRequest.Builder().build()
+        binding.mainContent.adView2.loadAd(adRequest)
     }
 
     private fun onActivityResult() {
@@ -114,10 +138,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        uiUpdate(mAuth.currentUser)
-    }
 
     private fun initViewModel() {
         viewModel.liveAdsData.observe(this) { list ->

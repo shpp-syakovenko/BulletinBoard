@@ -29,7 +29,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintTop_toBottomOf="@+id/adView2"
         app:layout_constraintVertical_bias="0.0" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -53,6 +53,16 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/rcView"
         app:layout_constraintEnd_toEndOf="@+id/rcView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:adSize="BANNER"
+        app:adUnitId="@string/ad_id"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 </androidx.constraintlayout.widget.ConstraintLayout>
