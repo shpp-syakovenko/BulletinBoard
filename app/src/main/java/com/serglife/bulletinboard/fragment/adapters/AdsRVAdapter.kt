@@ -10,17 +10,23 @@ import com.serglife.bulletinboard.MainActivity
 import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.model.Ad
 import com.serglife.bulletinboard.databinding.AdListItemBinding
-import com.serglife.bulletinboard.ui.description.DescriptionActivity
 import com.serglife.bulletinboard.ui.edit.EditAdsAct
 import com.squareup.picasso.Picasso
+import java.text.SimpleDateFormat
+import java.util.*
 
 class AdsRVAdapter(val activity: MainActivity) : RecyclerView.Adapter<AdsRVAdapter.AdViewHolder>() {
 
     val list = mutableListOf<Ad>()
+    private var timeFormatter: SimpleDateFormat? = null
+
+    init {
+        timeFormatter = SimpleDateFormat("dd/MM/yyyy - hh:mm:ss", Locale.getDefault())
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.ad_list_item, parent, false)
-        return AdViewHolder(view, activity)
+        return AdViewHolder(view, activity, timeFormatter!!)
     }
 
     override fun onBindViewHolder(holder: AdViewHolder, position: Int) {
@@ -48,7 +54,7 @@ class AdsRVAdapter(val activity: MainActivity) : RecyclerView.Adapter<AdsRVAdapt
         list.addAll(newList)
     }
 
-    class AdViewHolder(val item: View, val activity: MainActivity) : RecyclerView.ViewHolder(item) {
+    class AdViewHolder(val item: View, val activity: MainActivity, val formatter: SimpleDateFormat) : RecyclerView.ViewHolder(item) {
         private val binding = AdListItemBinding.bind(item)
 
         fun bind(ad: Ad) = with(binding) {
@@ -57,11 +63,18 @@ class AdsRVAdapter(val activity: MainActivity) : RecyclerView.Adapter<AdsRVAdapt
             tvPriceCV.text = ad.price
             tvViewCounter.text = ad.viewsCounter
             tvFav.text = ad.favCounter
+            (activity.getString(R.string.publishTime) + " ${getTimeFromMillions(ad.time)}").also { tvPublishTime.text = it }
             Picasso.get().load(ad.mainImage).into(imageView)
             isFav(ad)
             showEditPanel(isOwner(ad))
             mainOnClick(ad)
 
+        }
+
+        private fun getTimeFromMillions(timeMillions: String): String{
+            val c = Calendar.getInstance()
+            c.timeInMillis = timeMillions.toLong()
+            return formatter.format(c.time)
         }
 
         private fun mainOnClick(ad: Ad) = with(binding) {

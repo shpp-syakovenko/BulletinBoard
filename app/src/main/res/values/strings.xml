@@ -63,6 +63,7 @@
     <string name="description">Описание</string>
     <string name="description_hint">*Введите описание</string>
     <string name="publish">Опубликовать</string>
+    <string name="publishTime">Время публикации: </string>
 
     <!-- Description Activity -->
     <string name="price_desc">Цена:</string>
