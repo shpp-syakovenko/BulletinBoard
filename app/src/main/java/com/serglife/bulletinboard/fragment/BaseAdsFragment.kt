@@ -1,29 +1,37 @@
 package com.serglife.bulletinboard.fragment
 
 import android.app.Activity
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.serglife.bulletinboard.R
 import com.serglife.bulletinboard.fragment.common.InterAdsClose
+import com.serglife.bulletinboard.utils.BillingManager
 
 
 open class BaseAdsFragment: Fragment(), InterAdsClose {
 
     lateinit var adView: AdView
     private var interAd : InterstitialAd? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        loadInterAd()
-    }
+    private var pref: SharedPreferences? = null
+    private var isPremiumUser = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initAds()
+        pref = activity?.getSharedPreferences(BillingManager.MAIN_PREF, AppCompatActivity.MODE_PRIVATE)
+        isPremiumUser = pref?.getBoolean(BillingManager.REMOVE_ADS_PREF, false)!!
+
+        if(!isPremiumUser){
+            initAds()
+            loadInterAd()
+        }else{
+            adView.visibility = View.GONE
+        }
     }
 
     override fun onResume() {

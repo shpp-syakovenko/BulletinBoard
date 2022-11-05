@@ -13,6 +13,7 @@
     <string name="ad_smartphone">Смартфоны</string>
     <string name="ad_appliances">Бытовая техника</string>
     <string name="ad_cat_2">Аккаунт</string>
+    <string name="remove_ads">Удалить рекламу</string>
     <string name="ac_sing_up">Регистрация</string>
     <string name="ac_sing_in">Вход</string>
     <string name="ac_sing_out">Выход</string>
@@ -79,6 +80,10 @@
     <!-- Filter Activity -->
     <string name="done_filter">Применить фильтер</string>
     <string name="clear_filter">Очистить фильтер</string>
+
+    <!-- BillingManager -->
+    <string name="thanks_for_buy">Спасибо за покупку!</string>
+    <string name="buy_error">Не удалось реализовать покупку!</string>
 
 
 </resources>

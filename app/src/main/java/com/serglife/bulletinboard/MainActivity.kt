@@ -1,6 +1,8 @@
 package com.serglife.bulletinboard
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -36,6 +38,7 @@ import com.serglife.bulletinboard.ui.dialogs.account.DialogConst.SING_UP_STATE
 import com.serglife.bulletinboard.ui.dialogs.account.DialogHelper
 import com.serglife.bulletinboard.ui.edit.EditAdsAct
 import com.serglife.bulletinboard.ui.filter.FilterActivity
+import com.serglife.bulletinboard.utils.BillingManager
 import com.serglife.bulletinboard.utils.FilterManager
 import com.serglife.bulletinboard.viewmodel.FirebaseViewModel
 import com.squareup.picasso.Picasso
@@ -54,13 +57,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private var currentCategory: String? = null
     private var filter: String = FilterActivity.EMPTY
     private var filterDb: String = ""
+    private var pref: SharedPreferences? = null
+    private var isPremiumUser = false
+    private var bManager: BillingManager? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(ActivityMainBinding.inflate(layoutInflater).also { binding = it }.root)
+        pref = getSharedPreferences(BillingManager.MAIN_PREF, MODE_PRIVATE)
+        isPremiumUser = pref?.getBoolean(BillingManager.REMOVE_ADS_PREF, false)!!
+        if(!isPremiumUser){
+            initAds()
+        }else{
+            binding.mainContent.adView2.visibility = View.GONE
+        }
         init()
-        initAds()
         initViewModel()
         initRecyclerView()
         bottomMenuOnClick()
@@ -101,6 +113,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onDestroy() {
         super.onDestroy()
         binding.mainContent.adView2.destroy()
+        bManager?.closeConnection()
     }
 
     private fun initAds(){
@@ -234,6 +247,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.id_appliances -> {
                 getAdsFromCat(getString(R.string.ad_appliances))
+            }
+            R.id.id_remove_ads -> {
+                bManager = BillingManager(this)
+                bManager?.startConnection()
+
             }
             R.id.id_sing_up -> {
                 dialogHelper.createDialog(SING_UP_STATE)
