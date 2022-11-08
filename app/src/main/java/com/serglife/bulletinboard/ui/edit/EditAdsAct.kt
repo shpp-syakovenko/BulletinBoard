@@ -81,6 +81,7 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         edDescription.setText(ad.description)
         edEmail.setText(ad.email)
         ImageManager.fillImageArray(ad, imageAdapter)
+        updateImageCounter(0)
     }
 
     fun openChooseImageFragment(newList: List<Uri>?) {
@@ -130,13 +131,8 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
     }
 
     fun onClickPublish(view: View) {
-        val key = if (isEditState) ad?.key else null
         ad = fillAd()
-        if (isEditState) {
-            ad?.copy(key = key)?.let { dbManager.publishAd(it, onPublishFinish()) }
-        } else {
-            uploadImages()
-        }
+        uploadImages()
     }
 
     fun onPublishFinish() = object : DbManager.FinishWorkListener{
@@ -146,13 +142,33 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
     }
 
     private fun uploadImages(){
-        if(imageAdapter.list.size == imageIndex){
+        if(imageIndex == ImagePiker.MAX_IMAGE_COUNT){
             dbManager.publishAd(ad!!, onPublishFinish())
             return
         }
-        val byteArray = prepareImageByteArray(imageAdapter.list[imageIndex])
-        uploadImage(byteArray){
-            nextImage(it.result.toString())
+        val oldUrl = getUrlFromAd()
+
+        if(imageAdapter.list.size > imageIndex) {
+            val byteArray = prepareImageByteArray(imageAdapter.list[imageIndex])
+
+            if(oldUrl.startsWith("http")){
+                updateImage(byteArray, oldUrl){
+                    nextImage(it.result.toString())
+                }
+            }else{
+                uploadImage(byteArray) {
+                    nextImage(it.result.toString())
+                }
+            }
+
+        }else{
+            if(oldUrl.startsWith("http")){
+                deleteImageByUrl(oldUrl){
+                    nextImage("empty")
+                }
+            }else{
+                nextImage("empty")
+            }
         }
     }
 
@@ -172,6 +188,10 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         }
     }
 
+    private fun getUrlFromAd(): String{
+        return listOf(ad?.mainImage!!, ad?.image2!!, ad?.image3!!, ad?.image4!!, ad?.image5!!)[imageIndex]
+    }
+
     private fun prepareImageByteArray(bitmap: Bitmap): ByteArray{
         val outStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 20, outStream)
@@ -189,10 +209,23 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         }.addOnCompleteListener(listener)
     }
 
+    private fun deleteImageByUrl(oldUrl: String, listener: OnCompleteListener<Void>){
+        dbManager.dbStorage.storage.getReferenceFromUrl(oldUrl)
+            .delete().addOnCompleteListener(listener)
+    }
+
+    private fun updateImage(byteArray: ByteArray, url: String, listener: OnCompleteListener<Uri>){
+        val inStorageRef = dbManager.dbStorage.storage.getReferenceFromUrl(url)
+        val upTask = inStorageRef.putBytes(byteArray)
+        upTask.continueWithTask {
+            inStorageRef.downloadUrl
+        }.addOnCompleteListener(listener)
+    }
+
     fun fillAd(): Ad{
-        val ad: Ad
+        val adTemp: Ad
         binding.apply {
-            ad = Ad(
+            adTemp = Ad(
                 country = tvCountry.text.toString(),
                 city = tvCity.text.toString(),
                 tel = edTel.text.toString(),
@@ -203,23 +236,34 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
                 price = edPrice.text.toString(),
                 description = edDescription.text.toString(),
                 email = edEmail.text.toString(),
-                mainImage = "empty",
-                key = dbManager.db.push().key,
+                mainImage = ad?.mainImage ?: "empty",
+                image2 = ad?.image2 ?: "empty",
+                image3 = ad?.image3 ?: "empty",
+                image4 = ad?.image4 ?: "empty",
+                image5 = ad?.image5 ?: "empty",
+                key = ad?.key ?: dbManager.db.push().key,
                 uid = dbManager.auth.uid,
-                time = System.currentTimeMillis().toString()
+                time = ad?.time ?: System.currentTimeMillis().toString()
             )
         }
-        return ad
+        return adTemp
     }
 
     private fun imageChangeCounter(){
         binding.vpImages.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                val counter = "${position + 1}/${binding.vpImages.adapter?.itemCount}"
-                binding.tvImageCounter.text = counter
+                updateImageCounter(position)
             }
         })
+    }
+
+    private fun updateImageCounter(counter: Int){
+        var index = 1
+        val itemCount = binding.vpImages.adapter?.itemCount
+        if(itemCount == 0) index = 0
+        val imageCounter = "${counter + index}/$itemCount"
+        binding.tvImageCounter.text = imageCounter
     }
 
     // Realize interface
@@ -227,5 +271,6 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
         binding.scrollViewMain.visibility = View.VISIBLE
         imageAdapter.updateAdapter(list)
         chooseImageFragment = null
+        updateImageCounter(binding.vpImages.currentItem)
     }
 }

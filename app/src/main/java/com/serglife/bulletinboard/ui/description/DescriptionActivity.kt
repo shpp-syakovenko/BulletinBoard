@@ -55,6 +55,7 @@ class DescriptionActivity : AppCompatActivity() {
         tvCity.text = ad.city
         tvIndex.text = ad.index
         tvWithSend.text = isWithSend(ad.withSend.toBoolean())
+        updateImageCounter(0)
     }
 
     private fun isWithSend(withSend: Boolean): String {
@@ -93,10 +94,17 @@ class DescriptionActivity : AppCompatActivity() {
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                val counter = "${position + 1}/${binding.viewPager.adapter?.itemCount}"
-                binding.tvImageCounter.text = counter
+                updateImageCounter(position)
             }
         })
+    }
+
+    private fun updateImageCounter(counter: Int){
+        var index = 1
+        val itemCount = binding.viewPager.adapter?.itemCount
+        if(itemCount == 0) index = 0
+        val imageCounter = "${counter + index}/$itemCount"
+        binding.tvImageCounter.text = imageCounter
     }
 
     companion object {
