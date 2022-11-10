@@ -68,7 +68,7 @@ object ImageManager {
 
         for (i in uris.indices) {
 
-            val exc = kotlin.runCatching {
+            kotlin.runCatching {
                 bitmapList.add(
                     Picasso.get()
                         .load(uris[i])
@@ -76,11 +76,7 @@ object ImageManager {
                         .get()
                 )
             }
-            if(exc.isFailure){
-                Log.d("MyLog","Image is not loading!!!!!!! fun imageResize() error")
-            }
         }
-
 
         return@withContext bitmapList
     }
@@ -91,16 +87,13 @@ object ImageManager {
 
         for (i in uris.indices) {
 
-            val exc = kotlin.runCatching {
+            kotlin.runCatching {
                 bitmapList.add(
                     Picasso
                         .get()
                         .load(uris[i])
                         .get()
                 )
-            }
-            if(exc.isFailure){
-                Log.d("MyLog","Image is not loading!!!!!!! fun imageResize() error")
             }
         }
 

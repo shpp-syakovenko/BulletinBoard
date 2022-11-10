@@ -1,6 +1,5 @@
 package com.serglife.bulletinboard
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -29,6 +28,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.serglife.bulletinboard.databinding.ActivityMainBinding
+import com.serglife.bulletinboard.ext.showToast
 import com.serglife.bulletinboard.fragment.adapters.AdsRVAdapter
 import com.serglife.bulletinboard.model.Ad
 import com.serglife.bulletinboard.ui.description.DescriptionActivity
@@ -202,12 +202,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun bottomMenuOnClick() = with(binding) {
-        mainContent.bNavView.setOnNavigationItemSelectedListener { item ->
+        mainContent.bNavView.setOnItemSelectedListener { item ->
             clearUpdate = true
             when (item.itemId) {
                 R.id.id_new_ad -> {
-                    val intent = Intent(this@MainActivity, EditAdsAct::class.java)
-                    startActivity(intent)
+
+                    if(mAuth.currentUser != null){
+                        if (!mAuth.currentUser?.isAnonymous!!){
+                            val intent = Intent(this@MainActivity, EditAdsAct::class.java)
+                            startActivity(intent)
+                        }else{
+                            showToast("Только зарегистрированые пользователи могут публиковать обьявления!")
+                        }
+                    }else{
+                        showToast("Ошибка регистрации!!")
+                    }
+
+
                 }
                 R.id.id_my_ads -> {
                     viewModel.loadMyAd()

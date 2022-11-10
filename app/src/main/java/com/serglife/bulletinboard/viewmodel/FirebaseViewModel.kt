@@ -64,7 +64,7 @@ class FirebaseViewModel : ViewModel() {
 
     fun onFavClick(ad: Ad){
         dbManager.onFavClick(ad, object : DbManager.FinishWorkListener {
-            override fun onFinish() {
+            override fun onFinish(isDone: Boolean) {
                 val updateList = liveAdsData.value
                 val pos = updateList?.indexOf(ad)
                 if(pos != -1){
@@ -80,7 +80,7 @@ class FirebaseViewModel : ViewModel() {
 
     fun deleteItem(ad: Ad){
         dbManager.deleteAd(ad, object : DbManager.FinishWorkListener{
-            override fun onFinish() {
+            override fun onFinish(isDone: Boolean) {
                 val updateList = liveAdsData.value
                 updateList?.remove(ad)
                 liveAdsData.postValue(updateList)

@@ -45,7 +45,7 @@ class ImageListFragment(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return ListImageFragmentBinding.inflate(layoutInflater).also {
+        return ListImageFragmentBinding.inflate(layoutInflater, container, false).also {
             binding = it
             adView = binding.adView
         }.root

@@ -14,6 +14,7 @@ import com.serglife.bulletinboard.model.Ad
 import com.serglife.bulletinboard.model.DbManager
 import com.serglife.bulletinboard.databinding.ActivityEditAdsBinding
 import com.serglife.bulletinboard.ext.makeTransparentStatusBar
+import com.serglife.bulletinboard.ext.showToast
 import com.serglife.bulletinboard.fragment.common.FragmentCloseInterface
 import com.serglife.bulletinboard.fragment.ImageListFragment
 import com.serglife.bulletinboard.fragment.adapters.ImageAdapter
@@ -131,13 +132,30 @@ class EditAdsAct : AppCompatActivity(), FragmentCloseInterface {
     }
 
     fun onClickPublish(view: View) {
+        if(isFieldsEmpty()){
+            showToast("Внимание! Все поля должны быть заполнены!!!")
+            return
+        }
+        binding.progressLayout.visibility = View.VISIBLE
         ad = fillAd()
         uploadImages()
     }
 
+    private fun isFieldsEmpty(): Boolean = with(binding) {
+        return tvCountry.text.toString() == getString(R.string.selected_country) ||
+                tvCity.text.toString() == getString(R.string.selected_city) ||
+                tvCat.text.toString() == getString(R.string.select_category) ||
+                edTel.text.isEmpty() ||
+                edIndex.text.isEmpty() ||
+                edTitleCard.text.isEmpty() ||
+                edPrice.text.isEmpty() ||
+                edDescription.text.isEmpty()
+    }
+
     fun onPublishFinish() = object : DbManager.FinishWorkListener{
-        override fun onFinish() {
-            finish()
+        override fun onFinish(isDone: Boolean) {
+            binding.progressLayout.visibility = View.GONE
+            if(isDone) finish()
         }
     }
 
